@@ -6,3 +6,8 @@ sp1.py
 *.pdf
 *.docx
 *.pptx
+
+# codebase-memory-mcp (large binary, install separately)
+codebase-memory-mcp/
+codebase-memory-mcp.zip
+install.ps1
