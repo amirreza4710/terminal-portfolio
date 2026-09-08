@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dracula">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>amir@portfolio — zsh</title>
+<style>
+:root{
+  --bg:#08090f; --win:#282a36cc; --win-solid:#282a36; --chrome:#21222ccc;
+  --accent:#bd93f9; --green:#50fa7b; --fg:#f8f8f2; --dim:#6272a4; --muted:#8f9ab8;
+  --red:#ff5555; --yellow:#f1fa8c; --cyan:#8be9fd; --pink:#ff79c6; --comment:#6272a4;
+  --blob1:#3b2a6b; --blob2:#0f4c5c;
+  --dock-bg:#ffffff12; --glass-border:#ffffff22;
+}
+html[data-theme="solarized"]{
+  --bg:#001a20; --win:#002b36e6; --win-solid:#002b36; --chrome:#00212bcc;
+  --accent:#b58900; --green:#859900; --fg:#eee8d5; --dim:#586e75; --muted:#93a1a1;
+  --red:#dc322f; --yellow:#b58900; --cyan:#2aa198; --pink:#d33682; --comment:#586e75;
+  --blob1:#1e3a45; --blob2:#0a3a35;
+}
+html[data-theme="nord"]{
+  --bg:#20242e; --win:#2e3440e6; --win-solid:#2e3440; --chrome:#292e39cc;
+  --accent:#88c0d0; --green:#a3be8c; --fg:#eceff4; --dim:#4c566a; --muted:#8fa1b3;
+  --red:#bf616a; --yellow:#ebcb8b; --cyan:#81a1c1; --pink:#b48ead; --comment:#4c566a;
+  --blob1:#3b4252; --blob2:#2e4a5a;
+}
+html[data-theme="paper"]{
+  --bg:#e8e2d5; --win:#fbf8f1f5; --win-solid:#fbf8f1; --chrome:#f0ebe0cc;
+  --accent:#b3541e; --green:#3d6a35; --fg:#3a3630; --dim:#8a7f6d; --muted:#6e6558;
+  --red:#b03a2e; --yellow:#9a7b1e; --cyan:#1f6f7a; --pink:#a23b62; --comment:#8a7f6d;
+  --blob1:#d8c9b2; --blob2:#c9d5c5; --glass-border:#00000018;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace;
+  background:var(--bg); color:var(--fg);
+  min-height:100dvh; overflow-x:hidden;
+  display:flex; flex-direction:column; align-items:center;
+  padding:24px 16px calc(12px + env(safe-area-inset-bottom));
+  transition:background .5s;
+}
+.desktop-bg{position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(60% 55% at 18% 22%, var(--blob1) 0%, transparent 62%),
+    radial-gradient(55% 50% at 82% 18%, #1b1f3a 0%, transparent 60%),
+    radial-gradient(60% 55% at 70% 85%, var(--blob2) 0%, transparent 62%),
+    radial-gradient(50% 45% at 25% 88%, #1b1f3a 0%, transparent 58%),
+    linear-gradient(160deg, #1b1f3a 0%, var(--bg) 100%);
+  transition:background .5s;
+}
+.blob{position:fixed; z-index:-1; border-radius:50%; filter:blur(90px); opacity:.55; pointer-events:none;}
+.blob.b1{width:52vw;height:52vw;min-width:340px;min-height:340px; background:var(--blob1); top:-12%; left:-10%; animation:drift1 26s ease-in-out infinite alternate;}
+.blob.b2{width:46vw;height:46vw;min-width:300px;min-height:300px; background:var(--blob2); bottom:-14%; right:-8%; animation:drift2 32s ease-in-out infinite alternate;}
+@keyframes drift1{from{transform:translate(0,0) scale(1);} to{transform:translate(9vw,7vh) scale(1.12);}}
+@keyframes drift2{from{transform:translate(0,0) scale(1.08);} to{transform:translate(-8vw,-6vh) scale(.95);}}
+
+.window{
+  width:100%; max-width:980px; height:680px; max-height:calc(100dvh - 150px);
+  display:flex; flex-direction:column;
+  border-radius:14px; overflow:hidden;
+  border:1px solid var(--glass-border);
+  background:var(--win);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 40px 90px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.3);
+  transition:background .5s;
+}
+.chrome{
+  flex:0 0 auto; background:var(--chrome);
+  border-bottom:1px solid var(--glass-border);
+  display:flex; align-items:center; gap:10px; padding:9px 14px;
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+}
+.lights{display:flex; gap:8px;}
+.light{width:13px;height:13px;border-radius:50%;border:none;cursor:pointer;padding:0;flex:none;}
+.light.red{background:#ff5f57;} .light.yel{background:#febc2e;} .light.grn{background:#28c840;}
+.light:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.tabs{display:flex; gap:6px; flex:1; min-width:0; overflow:hidden;}
+.tab{
+  font-size:12.5px; color:var(--muted); background:transparent;
+  border:1px solid transparent; border-radius:8px; padding:5px 13px;
+  cursor:pointer; white-space:nowrap; font-family:inherit;
+}
+.tab.active{background:#ffffff14; color:var(--fg); border-color:var(--glass-border);}
+.tab:not(.active):hover{color:var(--fg); background:#ffffff0a;}
+.tab:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.traffic-title{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:560px){ .traffic-title{display:none;} .tab{padding:5px 9px; font-size:11px;} .tab .tablabel{display:none;} .tab .tabshort{display:inline;} }
+.tab .tabshort{display:none;}
+
+.pane{flex:1; min-height:0; display:none; flex-direction:column;}
+.pane.active{display:flex;}
+.term{position:relative; flex:1; min-height:0; overflow-y:auto; padding:18px 20px 22px; font-size:13.5px; line-height:1.65; cursor:text;}
+.term:focus-within{cursor:text;}
+.thin::-webkit-scrollbar{width:8px;height:8px;}
+.thin::-webkit-scrollbar-thumb{background:#ffffff22;border-radius:8px;}
+.thin::-webkit-scrollbar-track{background:transparent;}
+html[data-theme="paper"] .thin::-webkit-scrollbar-thumb{background:#00000022;}
+
+.ascii{color:var(--accent); text-shadow:0 0 10px var(--accent); white-space:pre; font-size:11px; line-height:1.25; letter-spacing:1px;}
+.line{white-space:pre-wrap; word-break:break-word; min-height:1.1em;}
+.dim{color:var(--dim);} .muted{color:var(--muted);} .acc{color:var(--accent);}
+.green{color:var(--green);} .red{color:var(--red);} .yellow{color:var(--yellow);} .cyan{color:var(--cyan);} .pink{color:var(--pink);} .gray{color:var(--dim);}
+a{color:var(--cyan); text-decoration:none; border-bottom:1px dotted var(--cyan);}
+a:hover{color:var(--accent);}
+.rtl{direction:rtl; text-align:right; unicode-bidi:plaintext;}
+[dir="auto"]{unicode-bidi:plaintext;}
+
+.promptline{display:flex; flex-wrap:wrap; align-items:baseline; gap:0 6px;}
+.pu{color:var(--green); font-weight:600;} .pa{color:var(--dim);} .pd{color:var(--cyan);} .pc{color:var(--pink); font-weight:700;}
+.promptline .lbl{font-weight:700;}
+.inputwrap{position:relative; flex:1; min-width:120px; display:inline-block;}
+#cmd{
+  font:inherit; color:var(--fg); background:transparent; border:none; outline:none;
+  padding:0; width:100%; caret-color:transparent;
+}
+.mirror{position:absolute; left:0; top:0; white-space:pre; visibility:hidden; font:inherit; color:var(--fg); max-width:100%; overflow:hidden;}
+.cursor{
+  display:inline-block; width:.62em; height:1.15em; background:var(--accent);
+  vertical-align:text-bottom; margin-left:-.62em; position:absolute; pointer-events:none;
+  animation:blink 1.1s steps(1) infinite; box-shadow:0 0 8px var(--accent);
+}
+.cursor.dimmed{opacity:.35; animation:none;}
+@keyframes blink{50%{opacity:0;}}
+.tap-pill{display:none;}
+@media(max-width:700px){
+  .tap-pill{
+    display:inline-block; position:fixed; bottom:calc(112px + env(safe-area-inset-bottom)); left:50%;
+    transform:translateX(-50%); background:var(--win-solid); color:var(--accent);
+    border:1px solid var(--accent); border-radius:999px; padding:7px 18px; font-size:13px;
+    animation:pulse 1.6s ease-in-out infinite; z-index:40; cursor:pointer; pointer-events:none;
+  }
+  .tap-pill.hidden{display:none;}
+}
+@keyframes pulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+@media(max-width:700px){
+  body{padding:12px 8px calc(10px + env(safe-area-inset-bottom));}
+  .window{height:auto; max-height:calc(100dvh - 120px); flex:1;}
+  .term{padding:14px 12px 18px; font-size:12.5px;}
+  .ascii{font-size:6px; letter-spacing:.5px;}
+}
+
+.matrix{position:absolute; inset:0; display:none; z-index:5;}
+.matrix.on{display:block;}
+#mx{width:100%; height:100%; display:block;}
+
+.bar-grid{display:grid; gap:12px; margin-top:6px;}
+.bar-row{display:grid; grid-template-columns:150px 1fr; align-items:center; gap:12px;}
+.bar-name{color:var(--fg); font-size:12.5px;}
+.bar-track{height:14px; border-radius:7px; background:#ffffff10; overflow:hidden; position:relative;}
+html[data-theme="paper"] .bar-track{background:#00000010;}
+.bar-fill{
+  height:100%; width:0; border-radius:7px; position:relative;
+  background:linear-gradient(90deg, var(--accent), var(--pink));
+  transition:width 1.1s cubic-bezier(.22,1,.36,1);
+}
+.bar-fill::after{content:""; position:absolute; inset:0;
+  background:repeating-linear-gradient(90deg, transparent 0 7px, rgba(255,255,255,.18) 7px 8px);}
+.bar-fill.in{width:var(--w);}
+@media(max-width:560px){ .bar-row{grid-template-columns:1fr; gap:4px;} }
+
+.proj-grid{display:grid; gap:12px; margin-top:6px;}
+.proj{
+  border-left:3px solid var(--accent); border-radius:0 10px 10px 0;
+  background:#ffffff0a; padding:12px 16px;
+  opacity:0; transform:translateY(14px); animation:rise .5s cubic-bezier(.22,1,.36,1) forwards;
+  transition:transform .25s, box-shadow .25s, background .25s;
+}
+html[data-theme="paper"] .proj{background:#00000008;}
+.proj:hover{transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.35); background:#ffffff12;}
+.proj.in{opacity:1;}
+@keyframes rise{to{opacity:1; transform:translateY(0);}}
+.proj h3{font-size:14px; margin-bottom:5px; color:var(--accent);}
+.proj .fa{color:var(--fg); font-family:inherit;}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.tag{font-size:10.5px; color:var(--muted); border:1px solid var(--glass-border); border-radius:999px; padding:2px 9px;}
+
+.kv{display:grid; grid-template-columns:max-content 1fr; gap:5px 18px; margin-top:4px;}
+.kv dt{color:var(--dim);} .kv dd{color:var(--fg);}
+
+.help-cols{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:3px 28px; margin-top:4px;}
+.help-cols div b{color:var(--accent); font-weight:600;}
+.help-cols div{color:var(--muted); font-size:12.5px;}
+@media(max-width:480px){.help-cols{grid-template-columns:1fr;}}
+
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 2px;}
+.chip{font:inherit; font-size:12px; color:var(--fg); background:#ffffff12; border:1px solid var(--glass-border); border-radius:999px; padding:4px 13px; cursor:pointer;}
+.chip:hover{background:var(--accent); color:var(--bg); border-color:var(--accent);}
+
+.dock{
+  margin-top:18px; display:flex; gap:14px; align-items:center;
+  background:var(--dock-bg); border:1px solid var(--glass-border);
+  border-radius:18px; padding:10px 16px;
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
+.dockbtn{position:relative; border:none; background:transparent; cursor:pointer; padding:4px;
+  border-radius:12px; transition:transform .22s cubic-bezier(.22,1,.36,1);}
+.dockbtn:hover, .dockbtn:focus-visible{transform:scale(1.3) translateY(-4px); z-index:10; outline:none;}
+.dockbtn:focus-visible{box-shadow:0 0 0 2px var(--accent);}
+.icon{width:42px;height:42px;border-radius:11px;display:block; box-shadow:0 6px 14px rgba(0,0,0,.4);}
+.tip{
+  position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) scale(.85);
+  background:var(--win-solid); color:var(--fg); font-size:11.5px; padding:4px 11px; border-radius:7px;
+  white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .18s, transform .18s;
+  border:1px solid var(--glass-border);
+}
+.dockbtn:hover .tip, .dockbtn:focus-visible .tip{opacity:1; transform:translateX(-50%) scale(1);}
+.dock-status{margin-left:auto; font-size:11px; color:var(--muted); white-space:nowrap;}
+@media(max-width:620px){.dock-status{display:none;} .dock{gap:10px;} .icon{width:36px;height:36px;}}
+.veil{position:fixed; inset:0; background:transparent; z-index:0;}
+.window.min{display:none;}
+.window.max{max-width:none; width:calc(100% - 32px); height:calc(100dvh - 140px);}
+</style>
+</head>
+<body><button id="langToggle" style="position:fixed;top:18px;right:18px;z-index:20;border:1px solid #ffffff33;background:#ffffff18;color:#fff;padding:8px 12px;border-radius:999px;backdrop-filter:blur(12px);cursor:pointer">🇬🇧 EN · 🇮🇷 فارسی</button>
+<div class="desktop-bg" aria-hidden="true"></div>
+<div class="blob b1" aria-hidden="true"></div>
+<div class="blob b2" aria-hidden="true"></div>
+<button class="tap-pill hidden" id="pill" aria-hidden="true">Tap to type</button>
+
+<div class="window" id="win">
+  <div class="chrome">
+    <div class="lights">
+      <button class="light red" id="btnMin" aria-label="Minimize window (cosmetic toggle)" title="Minimize"></button>
+      <button class="light yel" aria-label="Close (cosmetic only)" title="Cosmetic" disabled></button>
+      <button class="light grn" id="btnMax" aria-label="Toggle fullscreen window" title="Fullscreen"></button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Terminal panes">
+      <button class="tab active" role="tab" aria-selected="true" data-pane="terminal">amir@portfolio — zsh</button>
+      <button class="tab" role="tab" aria-selected="false" data-pane="notes">notes.md</button>
+      <button class="tab" role="tab" aria-selected="false" data-pane="log">server.log</button>
+    </div>
+    <span class="traffic-title" id="paneTitle">amir@portfolio — zsh</span>
+  </div>
+
+  <div class="pane active" id="pane-terminal">
+    <div class="term thin" id="term">
+      <div class="matrix" id="mxwrap" aria-hidden="true"><canvas id="mx"></canvas></div>
+      <div id="out" aria-live="polite"></div>
+      <div class="promptline" id="pline">
+        <span><span class="pu">amir</span><span class="pa">@</span><span class="pd">portfolio</span> <span class="pc">❯</span> </span>
+        <span class="inputwrap">
+          <span class="mirror" id="mirror"></span>
+          <input id="cmd" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command input">
+          <span class="cursor" id="cur" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div id="out2" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="pane" id="pane-notes">
+    <div class="term thin" id="notesBody"></div>
+  </div>
+  <div class="pane" id="pane-log">
+    <div class="term thin" id="logBody"></div>
+  </div>
+</div>
+
+<nav class="dock" aria-label="Dock">
+  <button class="dockbtn" data-cmd="projects" aria-label="Open projects"><svg class="icon" viewBox="0 0 48 48"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="48" height="48" rx="11" fill="url(#g1)"/><path d="M10 30l8-14 6 9 5-6 9 11z" fill="#fff" opacity=".95"/><circle cx="16" cy="14" r="3.5" fill="#fff"/></svg><span class="tip">Projects</span></button>
+  <button class="dockbtn" data-cmd="skills" aria-label="Open skills"><svg class="icon" viewBox="0 0 48 48"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs><rect width="48" height="48" rx="11" fill="url(#g2)"/><rect x="10" y="28" width="6" height="10" rx="2" fill="#fff"/><rect x="20" y="22" width="6" height="16" rx="2" fill="#fff"/><rect x="30" y="14" width="6" height="24" rx="2" fill="#fff"/></svg><span class="tip">Skills</span></button>
+  <button class="dockbtn" data-cmd="contact" aria-label="Open contact"><svg class="icon" viewBox="0 0 48 48"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs><rect width="48" height="48" rx="11" fill="url(#g3)"/><rect x="9" y="14" width="30" height="21" rx="4" fill="#fff"/><path d="M10 16l14 10 14-10" fill="none" stroke="#0ea5e9" stroke-width="2.5"/></svg><span class="tip">Contact</span></button>
+  <button class="dockbtn" data-cmd="theme" aria-label="Cycle theme"><svg class="icon" viewBox="0 0 48 48"><defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><rect width="48" height="48" rx="11" fill="url(#g4)"/><circle cx="24" cy="24" r="11" fill="none" stroke="#fff" stroke-width="3"/><path d="M24 13a11 11 0 000 22z" fill="#fff"/></svg><span class="tip">Themes — cycle</span></button>
+  <button class="dockbtn" data-cmd="help" aria-label="Open help"><svg class="icon" viewBox="0 0 48 48"><defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#64748b"/><stop offset="1" stop-color="#334155"/></linearGradient></defs><rect width="48" height="48" rx="11" fill="url(#g5)"/><text x="24" y="32" font-size="20" font-family="monospace" fill="#fff" text-anchor="middle">&gt;_</text></svg><span class="tip">Help / launch</span></button>
+  <span class="dock-status">Tab complete · ↑↓ history · theme &lt;name&gt;</span>
+</nav>
+<div class="veil" id="veil" hidden></div>
+<script>
+"use strict";
+/* ============================================================
+   PROFILE — edit this single object to personalize everything
+   ============================================================ */
+const PROFILE = {
+  nameEn: "Amirreza Ahmadynezhad",
+  nameFa: "امیررضا احمدی‌نژاد",
+  location: "Mashhad, Khorasan Razavi, Iran",
+  roles: ["System Architect", "Product Thinker", "Digital Marketing & Sales", "Vibe Coder"],
+  about: [
+    "معمار سیستم و طراح محصول، ساکن مشهد، استان خراسان رضوی.",
+    "کدنویس خلاق و سازنده تجربه‌های دیجیتال. تمرکز من روی معماری سیستم‌های",
+    "یکپارچه، بازطراحی گردش‌کارها و فروش دیجیتال است. حسابداری و رسیدگی ERP",
+    "هم از تخصص‌های جانبی من است. این صفحه یک دموی محلی است؛ بدون ادعای آماری."
+  ],
+  skills: [
+    {name:"System Architecture", w:95, note:"معماری سیستم"},
+    {name:"Product Thinking", w:85, note:"تفکر محصول"},
+    {name:"Sales Systems / Forooshyar", w:80, note:"سیستم فروش"},
+    {name:"Digital Marketing", w:70, note:"مارکتینگ دیجیتال"},
+    {name:"ERP Audit & Accounting", w:65, note:"حسابرسی ERP"},
+    {name:"Workflow Redesign", w:75, note:"بازطراحی گردش‌کار"}
+  ],
+  skillsDisclaimer: "نمودار بالا تأکید تصویری و قابل ویرایش است — نه اندازه‌گیری تأییدشدهٔ مهارت. اعداد فقط وزن نمایشی هستند.",
+  projects: [
+    {name:"Vibe Coder", fa:"Vibe Coder", color:"#bd93f9", tags:["system architecture","integrated workflows"],
+      desc:"معماری سیستم و گردش‌کارهای یکپارچه؛ توسعه خلاقانه و طراحی تجربه‌های دیجیتال.", role:"Co-architect"},
+    {name:"Forooshyar", fa:"فروشیار", color:"#f1fa8c", tags:["sales focus","product"],
+      desc:"محصول با تمرکز بر فروش و بهینه‌سازی مسیر فروش.", role:"Product"},
+    {name:"Farakhoran Sales OS", fa:"فراخوران", color:"#8be9fd", tags:["sales OS","operations"],
+      desc:"سیستم‌عامل فروش — چارچوب عملیاتی برای گردش کامل فروش.", role:"Architect"},
+    {name:"Pistachio Operations", fa:"پسته", color:"#50fa7b", tags:["agri workflow","Feyzabad / Mahvelat"],
+      desc:"گردش‌کار فرآوری پسته در فیض‌آباد مه‌ولات: توزین ورودی و پس از پوست‌گیری، خشک‌کن، بسته‌بندی و تسویه با باغدار.", role:"Workflow design"}
+  ],
+  contact: { phone:"+989157077994", telegram:"https://t.me/amirreza4710",
+    email:"amirrezaahmadynezhad@gmail.com", github:"https://github.com/amirreza4710", mastodon:"https://t.me/amirreza4710", pgp:"Available on request",
+    note:"راه‌های ارتباطی مستقیم من"
+  },
+  themes:["dracula","solarized","nord","paper"]
+};
+
+/* ---------- tiny utils ---------- */
+const $ = s => document.querySelector(s);
+const out = $("#out"), term = $("#term"), input = $("#cmd"), mirror = $("#mirror"), cur = $("#cur");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function html(node, h){ node.insertAdjacentHTML("beforeend", h); }
+function line(node, h){ const d=document.createElement("div"); d.className="line"; d.innerHTML=h||""; node.appendChild(d); term.scrollTop=term.scrollHeight; return d; }
+function pad(n,w){ return String(n).padStart(w," "); }
+
+/* ---------- theme ---------- */
+function setTheme(name, quiet){
+  if(!PROFILE.themes.includes(name)){ line(out, `<span class="red">zsh: unknown theme:</span> ${esc(name)} <span class="dim">(try: ${PROFILE.themes.join(", ")})</span>`); return false; }
+  document.documentElement.dataset.theme = name;
+  if(!quiet) line(out, `theme → <span class="acc">${esc(name)}</span>`);
+  return true;
+}
+
+/* ---------- boot ASCII ---------- */
+const AMIR = [
+"  ▄▀█ ▀▄▀ █ █▀█ ▄▀█   ▄▄ █   █▀█ █   █",
+"  █▀█ █░█ █ █▀▄ █▀█   ░░ █   █ █ █   █",
+"  ▀░▀ ▀░▀ ▀ ▀░▀ ▀▀▀       ▀▀▀ ▀▀▀  ▀▀▀"
+].join("\n");
+const AMIR_SMALL = ["  ▄▀█ ▀▄▀ █ █▀█","  █▀█ █░█ █ █▀▄","  ▀░▀ ▀░▀ ▀ ▀░▀"].join("\n");
+
+function welcome(){ return `<span class="dim">به ترمینال پورتفولیو من خوش آمدید.</span> — <span class="acc">welcome</span> · type <span class="acc">help</span> to begin`; }
+
+function boot(){
+  const logoNode = document.createElement("pre");
+  logoNode.className = "ascii";
+  out.appendChild(logoNode);
+  const small = innerWidth < 480;
+  const art = small ? AMIR_SMALL : AMIR;
+  if(reduceMotion){ logoNode.textContent = art + "\n"; finishBoot(); return; }
+  let i = 0, full = art + "\n";
+  const t = setInterval(()=>{
+    i += 4;
+    logoNode.textContent = full.slice(0, i);
+    term.scrollTop = term.scrollHeight;
+    if(i >= full.length){ clearInterval(t); logoNode.textContent = full; finishBoot(); }
+  }, 28);
+}
+function finishBoot(){
+  line(out, `<span class="dim">Last login: ${new Date().toLocaleString()} on local/demo console</span>`);
+  line(out, welcome());
+  const suggestions = ["about","skills","projects","contact","theme paper"];
+  const d = document.createElement("div"); d.className="chips";
+  d.innerHTML = suggestions.map(s=>`<button class="chip" data-run="${esc(s)}">${esc(s)}</button>`).join("");
+  out.appendChild(d);
+  d.addEventListener("click", e=>{ const b=e.target.closest("[data-run]"); if(b) runFromChip(b.dataset.run); });
+  focusInput();
+}
+
+/* ---------- input mechanics ---------- */
+const inputWrap = input.parentElement;
+function syncCursor(){
+  mirror.textContent = input.value + "\n";
+  let x = 0;
+  if(input.value){
+    const span = document.createElement("span");
+    mirror.textContent = input.value;
+    const r = document.createRange();
+    r.selectNodeContents(mirror); r.collapse(false);
+    const rect = r.getBoundingClientRect();
+    x = mirror.getBoundingClientRect().right - rect.right; // fallback
+    x = 0;
+    // measure with a temporary span holding text up to caret end
+    const meas = document.createElement("span");
+    meas.textContent = input.value;
+    mirror.textContent = "";
+    mirror.appendChild(meas);
+    x = meas.getBoundingClientRect().width;
+    mirror.textContent = "";
+  } else mirror.textContent = "";
+  cur.style.left = x + "px";
+  input.style.width = "100%";
+}
+function focusInput(){ if(matchMedia("(min-width:701px)").matches) input.focus({preventScroll:true}); else $("#pill").classList.remove("hidden"); }
+input.addEventListener("focus", ()=>{ $("#pill").classList.add("hidden"); cur.classList.remove("dimmed"); });
+input.addEventListener("blur", ()=> cur.classList.add("dimmed"));
+input.addEventListener("input", syncCursor);
+term.addEventListener("click", e=>{
+  if(e.target.closest("a,button,canvas")) return;
+  if(getSelection().toString()) return;
+  focusInput();
+});
+$("#pill").addEventListener("click", focusInput);
+
+/* ---------- history ---------- */
+let hist = JSON.parse(localStorage.getItem("amir-hist")||"[]");
+let hi = hist.length, draft = "";
+input.addEventListener("keydown", e=>{
+  if(e.key==="ArrowUp"){ e.preventDefault(); if(hist.length){ if(hi===hist.length) draft=input.value; hi=Math.max(0,hi-1); input.value=hist[hi]||""; syncCursor(); } }
+  else if(e.key==="ArrowDown"){ e.preventDefault(); if(hi<hist.length){ hi++; input.value = hi===hist.length? draft : hist[hi]; syncCursor(); } }
+  else if(e.key==="Tab"){ e.preventDefault(); complete(); }
+  else if(e.key==="l" && e.ctrlKey){ e.preventDefault(); clearScreen(); }
+  else if(e.key==="c" && e.ctrlKey){ e.preventDefault(); ctrlC(); }
+  else if(e.key==="Enter"){ e.preventDefault(); submit(); }
+  else if(mxOn){ stopMatrix(true); }
+});
+
+/* ---------- suggestions ---------- */
+function runFromChip(s){ promptEcho(s); exec(s); }
+
+function promptEcho(text){
+  const p = document.createElement("div");
+  p.className="line";
+  p.innerHTML = `<span><span class="pu">amir</span><span class="pa">@</span><span class="pd">portfolio</span> <span class="pc">❯</span> </span>${esc(text)}`;
+  out.appendChild(p);
+}
+
+/* ---------- command output builders ---------- */
+function cmdHelp(){
+  line(out, `<span class="acc">commands</span>`);
+  const items = [
+    ["help","this list"],["about","پروفایل / profile"],["skills","نمودار تأکید مهارت‌ها"],
+    ["projects","چهار پروژه"],["contact","راه‌های ارتباطی (unset)"],["theme <name>","dracula·solarized·nord·paper"],
+    ["matrix","بارش کد — ۷ ثانیه"],["history","فرمان‌های قبلی"],["clear","پاک‌کردن صفحه"],
+    ["whoami","who am i"],["date","تاریخ و ساعت"],["echo <text>","بازنویسی متن"],
+    ["ls","فایل‌های نمونه"],["sudo","…شوخی"],["notes","یادداشت‌ها"],["log","server.log"]
+  ];
+  const d=document.createElement("div"); d.className="help-cols";
+  d.innerHTML = items.map(([c,h])=>`<div><b>${esc(c)}</b> — ${esc(h)}</div>`).join("");
+  out.appendChild(d);
+}
+function cmdAbout(){
+  const p=PROFILE;
+  line(out, `<span class="acc">${esc(p.nameEn)}</span> <span class="dim">/</span> <span class="acc" dir="rtl">${esc(p.nameFa)}</span>`);
+  const d=document.createElement("dl"); d.className="kv";
+  const rows=[["Role", p.roles.join(" · ")],["Location", p.location]];
+  d.innerHTML = rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  out.appendChild(d);
+  const fa=document.createElement("div"); fa.className="rtl"; fa.style.marginTop="10px";
+  fa.style.color="var(--muted)";
+  fa.textContent = p.about.join("\n");
+  out.appendChild(fa);
+}
+function cmdSkills(){
+  line(out, `<span class="acc">skills</span> <span class="dim">— نمودار تأکید تصویری (قابل ویرایش، نه سنجش واقعی)</span>`);
+  const g=document.createElement("div"); g.className="bar-grid";
+  g.innerHTML = PROFILE.skills.map(s=>`
+    <div class="bar-row">
+      <span class="bar-name">${esc(s.name)}</span>
+      <span class="bar-track"><span class="bar-fill" style="--w:${s.w}%"></span></span>
+    </div>`).join("");
+  out.appendChild(g);
+  requestAnimationFrame(()=>requestAnimationFrame(()=> g.querySelectorAll(".bar-fill").forEach(b=>b.classList.add("in"))));
+  line(out, `<span class="dim" dir="rtl">${esc(PROFILE.skillsDisclaimer)}</span>`);
+}
+function cmdProjects(){
+  line(out, `<span class="acc">projects</span> <span class="dim">— حوزه‌های کاری (بدون ادعای آماری)</span>`);
+  const g=document.createElement("div"); g.className="proj-grid";
+  g.innerHTML = PROFILE.projects.map((p,i)=>`
+    <article class="proj" style="border-left-color:${p.color}; animation-delay:${i*90}ms">
+      <h3>${esc(p.name)} <span class="fa" dir="rtl" style="color:var(--muted);font-size:12px">${esc(p.fa)}</span></h3>
+      <div style="color:var(--muted);font-size:12px" dir="auto">${esc(p.desc)}</div>
+      <div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}<span class="tag" style="border-color:${p.color};color:${p.color}">${esc(p.role)}</span></div>
+    </article>`).join("");
+  out.appendChild(g);
+}
+function cmdContact(){
+  const c=PROFILE.contact;
+  line(out, `<span class="acc">contact</span>`);
+  const fields=[["email",c.email],["github",c.github],["mastodon",c.mastodon],["pgp",c.pgp]];
+  const d=document.createElement("dl"); d.className="kv";
+  d.innerHTML = fields.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v? esc(v) : `<span class="yellow">unset — تنظیم نشده</span>`}</dd>`).join("");
+  out.appendChild(d);
+  line(out, `<span class="dim" dir="rtl">${esc(c.note)}</span>`);
+}
+function cmdHistory(){
+  if(!hist.length){ line(out, `<span class="dim">no history yet</span>`); return; }
+  hist.forEach((h,i)=> line(out, `<span class="dim">${pad(i+1,4)}</span>  ${esc(h)}`));
+}
+function cmdLs(){
+  line(out, `<span class="cyan">notes.md</span>  <span class="cyan">server.log</span>  <span class="dim">PROFILE</span>`);
+}
+function cmdSudo(){
+  line(out, `<span class="red">amir is not in the sudoers file. This incident will be reported to no one.</span>`);
+}
+function cmdUnknown(cmd){
+  line(out, `<span class="red">zsh: command not found:</span> ${esc(cmd)}  <span class="dim">(try: help)</span>`);
+}
+function clearScreen(){ out.innerHTML=""; }
+
+/* ---------- matrix ---------- */
+const mxwrap=$("#mxwrap"), mx=$("#mx");
+let mxOn=false, mxTimer=null, mxRaf=null;
+function startMatrix(){
+  mxwrap.classList.add("on"); mxOn=true;
+  const ctx=mx.getContext("2d");
+  const glyphs="アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789<>/{}[]$#@%&*".split("");
+  let cols, drops, size=14;
+  function resize(){
+    mx.width=mxwrap.clientWidth; mx.height=mxwrap.clientHeight;
+    cols=Math.ceil(mx.width/size);
+    drops=Array(cols).fill(0).map(()=>Math.random()*mx.height/size);
+  }
+  resize();
+  const green=getComputedStyle(document.documentElement).getPropertyValue("--green").trim()||"#50fa7b";
+  ctx.font=size+"px monospace";
+  let last=0;
+  function draw(ts){
+    if(ts-last<50){ mxRaf=requestAnimationFrame(draw); return; }
+    last=ts;
+    ctx.fillStyle="rgba(0,0,0,.14)"; ctx.fillRect(0,0,mx.width,mx.height);
+    ctx.fillStyle=green;
+    for(let i=0;i<cols;i++){
+      ctx.fillText(glyphs[Math.random()*glyphs.length|0], i*size, drops[i]*size);
+      drops[i]+= .6;
+      if(drops[i]*size>mx.height && Math.random()>.975) drops[i]=0;
+    }
+    mxRaf=requestAnimationFrame(draw);
+  }
+  if(!reduceMotion) mxRaf=requestAnimationFrame(draw);
+  else { ctx.fillStyle=green; for(let i=0;i<400;i++) ctx.fillText(glyphs[Math.random()*glyphs.length|0], Math.random()*mx.width, Math.random()*mx.height); }
+  mxTimer=setTimeout(stopMatrix, 7000);
+  mxwrap.addEventListener("click", matrixTap);
+}
+function matrixTap(){ if(mxOn) stopMatrix(true); }
+function stopMatrix(byKey){
+  mxOn=false; clearTimeout(mxTimer); cancelAnimationFrame(mxRaf);
+  mxwrap.classList.remove("on"); mxwrap.removeEventListener("click", matrixTap);
+  mx.getContext("2d").clearRect(0,0,mx.width,mx.height);
+  if(byKey) line(out, `<span class="green">matrix escaped early —</span> <span class="dim">chickened out before the rain finished 🐤</span>`);
+  else line(out, `<span class="green">matrix complete.</span> <span class="dim">There is no spoon — only a 7-second demo.</span>`);
+  focusInput();
+}
+
+/* ---------- tab completion ---------- */
+const COMMANDS=["help","about","skills","projects","contact","theme","matrix","history","clear","whoami","date","echo","ls","sudo","notes","log"];
+function complete(){
+  const v=input.value;
+  const m=v.match(/^(theme\s+)(\S*)$/i);
+  let cands, base;
+  if(m){ base=v; cands=PROFILE.themes.filter(t=>t.startsWith(m[2].toLowerCase())); 
+    if(cands.length===1){ input.value=m[1]+cands[0]+" "; syncCursor(); }
+    else if(cands.length>1){ promptEcho(v); line(out, cands.map(esc).join("   ")); }
+    return;
+  }
+  const parts=v.split(" ");
+  if(parts.length>1) return;
+  cands=COMMANDS.filter(c=>c.startsWith(v.toLowerCase()));
+  if(cands.length===1){ input.value=cands[0]+" "; syncCursor(); }
+  else if(cands.length>1){ promptEcho(v); line(out, cands.map(esc).join("   ")); }
+  else if(v) promptEcho(v);
+}
+
+/* ---------- ctrl+c ---------- */
+function ctrlC(){
+  promptEcho(input.value + "^C");
+  input.value=""; syncCursor();
+}
+
+/* ---------- dispatcher ---------- */
+function exec(raw){
+  const v=raw.trim();
+  if(!v){ focusInput(); return; }
+  hist.push(raw); if(hist.length>200) hist.shift();
+  localStorage.setItem("amir-hist", JSON.stringify(hist));
+  hi=hist.length; draft="";
+  const [cmd, ...rest]=v.split(/\s+/);
+  const arg=rest.join(" ");
+  switch(cmd.toLowerCase()){
+    case "help": cmdHelp(); break;
+    case "about": cmdAbout(); break;
+    case "skills": cmdSkills(); break;
+    case "projects": cmdProjects(); break;
+    case "contact": cmdContact(); break;
+    case "theme": arg? setTheme(arg) : line(out, `themes: ${PROFILE.themes.map(esc).join(" · ")} <span class="dim">(usage: theme &lt;name&gt;)</span>`); break;
+    case "matrix": startMatrix(); break;
+    case "history": cmdHistory(); break;
+    case "clear": clearScreen(); break;
+    case "whoami": line(out, `<span class="acc">${esc(PROFILE.nameEn)}</span> <span class="dim">/ ${esc(PROFILE.nameFa)} — ${esc(PROFILE.location)}</span>`); break;
+    case "date": line(out, new Date().toString()); break;
+    case "echo": line(out, esc(arg)); break;
+    case "ls": cmdLs(); break;
+    case "sudo": cmdSudo(); break;
+    case "notes": switchTab("notes"); break;
+    case "log": case "server.log": switchTab("log"); break;
+    default: cmdUnknown(cmd);
+  }
+  focusInput();
+}
+function submit(){
+  const v=input.value;
+  input.value=""; syncCursor();
+  promptEcho(v);
+  exec(v);
+}
+
+/* ---------- tabs / panes ---------- */
+let savedScroll=0;
+function switchTab(name){
+  document.querySelectorAll(".pane").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>{
+    const on=t.dataset.pane===name;
+    t.classList.toggle("active",on); t.setAttribute("aria-selected",on);
+  });
+  $("#pane-"+name).classList.add("active");
+  const titles={terminal:"amir@portfolio — zsh", notes:"notes.md — دفترچه (دموی محلی)", log:"server.log — دموی محلی"};
+  $("#paneTitle").textContent=titles[name];
+  if(name!=="terminal"){ cur.classList.add("dimmed"); input.blur(); }
+  else focusInput();
+}
+document.querySelectorAll(".tab").forEach(t=> t.addEventListener("click", ()=> switchTab(t.dataset.pane)));
+
+/* notes.md — genuine local demo content, not fabricated backend */
+$("#notesBody").innerHTML = `
+<div class="line"><span class="acc">notes.md</span> <span class="dim">— یادداشت‌های واقعی دموی محلی</span></div>
+<div class="line dim">──────────────────────────────</div>
+<div class="line rtl">• این فایل صرفاً یادداشت محلی و ایستا است؛ هیچ بک‌اند یا سرویس پشت آن نیست.</div>
+<div class="line rtl">• ساختار پروفایل در شیء PROFILE در ابتدای اسکریپت همین فایل قرار دارد و قابل ویرایش است.</div>
+<div class="line rtl">• نوارهای مهارت تأکید تصویری‌اند، نه درصد مهارت سنجیده‌شده.</div>
+<div class="line rtl">• راه‌های ارتباطی (ایمیل، گیت‌هاب، ماستودون، PGP) آگاهانه خالی مانده‌اند تا آدرس جعلی نمایش داده نشود.</div>
+<div class="line rtl">• برای بازگشت به ترمینال، روی تب «amir@portfolio — zsh» کلیک کنید.</div>`;
+
+/* server.log — genuine local demo status */
+(function(){
+  const now=new Date();
+  const f=d=>d.toISOString().replace("T"," ").slice(0,19);
+  $("#logBody").innerHTML = `
+<div class="line"><span class="acc">server.log</span> <span class="dim">— local demo, no real server involved</span></div>
+<div class="line dim">──────────────────────────────</div>
+<div class="line"><span class="dim">${f(now)}</span> <span class="green">INFO</span>  session started on local/demo console</div>
+<div class="line"><span class="dim">${f(now)}</span> <span class="green">INFO</span>  PROFILE loaded — 4 projects, ${PROFILE.skills.length} skill entries, 4 themes</div>
+<div class="line"><span class="dim">${f(now)}</span> <span class="yellow">WARN</span>  contact endpoints unset (email/github/mastodon/pgp) — intentional</div>
+<div class="line"><span class="dim">${f(now)}</span> <span class="cyan">DEBUG</span>  UI: single-file HTML, zero network dependencies</div>
+<div class="line"><span class="dim">${f(now)}</span> <span class="green">INFO</span>  ready. type <span class="acc">help</span> in the terminal tab.</div>`;
+})();
+
+/* ---------- traffic lights ---------- */
+$("#btnMin").addEventListener("click", ()=>{
+  const w=$("#win");
+  if(w.classList.contains("min")){ w.classList.remove("min"); }
+  else {
+    w.classList.add("min");
+    const restore=document.createElement("button");
+    restore.textContent="↩ restore terminal";
+    restore.className="chip"; restore.style.position="fixed"; restore.style.top="16px"; restore.style.right="16px"; restore.style.zIndex="60";
+    restore.addEventListener("click",()=>{ w.classList.remove("min"); restore.remove(); });
+    document.body.appendChild(restore);
+  }
+});
+$("#btnMax").addEventListener("click", ()=> $("#win").classList.toggle("max"));
+
+/* ---------- dock ---------- */
+let themeIdx=0;
+document.querySelectorAll(".dockbtn").forEach(b=> b.addEventListener("click", ()=>{
+  const c=b.dataset.cmd;
+  if($("#win").classList.contains("min")) $("#win").classList.remove("min");
+  switchTab("terminal");
+  if(c==="theme"){ themeIdx=(themeIdx+1)%PROFILE.themes.length; setTheme(PROFILE.themes[themeIdx]); }
+  else { promptEcho(c); exec(c); }
+}));
+
+/* ---------- mobile viewport keyboard handling ---------- */
+addEventListener("focusin", e=>{ if(e.target===input) cur.classList.remove("dimmed"); });
+addEventListener("keydown", e=>{ if(mxOn && e.key!=="F5" && e.key!=="F12"){ stopMatrix(true); } }, true);
+
+/* ---------- boot ---------- */
+if(innerWidth<480) switchTab("terminal");
+boot();
+syncCursor();
+
+</script>
+
+<!-- ===== کتابخانه پرامپت (independent enhancement) ===== -->
+<script>
+(function(){
+  'use strict';
+  var CARDS = [{"id": 1, "title": "رابط گفت‌وگویی فارسی بومی‌سازی‌شده", "prompt": "You are a Persian conversational UI assistant for an Iranian web app. Always reply in Persian. Detect user formality (formal/casual) and dialect (Tehrani, Shirazi, Esfahani — default: معیار). For the given intent [موضوع/این‌تنت] return JSON with: \"utterances\" (6 example user phrasings), \"responses\" (3 variations per formality: short, medium, long), \"clarifying_questions\" (max 3), \"ui_text\" (button labels and microcopy, max 6 items). Mark answers needing human review with \"needs_review\": true. Output only valid JSON. خروجی فارسی."}, {"id": 2, "title": "PWA موبایل‌اول و کش آفلاین", "prompt": "You are an expert PWA engineer writing Persian developer docs for offline-first UX. Produce: (1) minimal Service Worker (App Shell + runtime cache), (2) list of cache names and example assets, (3) offline UX strings in Persian, (4) offline form fallback (queue + retry). کانتکست پروژه: [نام اپ/دامنه]. Return code + a 6-line production checklist. خروجی فارسی."}, {"id": 3, "title": "3D/AR سبک با بارگذاری تدریجی", "prompt": "You are a frontend/3D performance guide for a Persian audience. For the scene [توصیف صحنه] give: step-by-step best practices for lightweight glTF (compression, draco, texture atlasing), a JS snippet to progressively load LODs with a low-res placeholder function, trade-offs CPU vs bandwidth, and metrics to monitor (FMP, TTI, LCP, INP). Structured text + one short function. خروجی فارسی."}, {"id": 4, "title": "ورودی صوتی و خروجی گفتاری فارسی (STT/TTS)", "prompt": "You are a voice UX and engineering specialist. Produce a Persian STT/TTS plan for the feature [ویژگی صوتی]: recommended pipeline (frontend capture → noise suppression → server ASR → intent), sample TTS style prompts (formal, friendly), error-handling UX for misrecognition/accent, and a minimal example of capture → send → receive transcript as JSON (with permission/capture flow). Code snippets + Persian UX lines."}, {"id": 5, "title": "محتوای محلی و سناریوهای ایرانی", "prompt": "You are a localization content designer for Iranian services. For three domains (اداری، بانکی، خدمات شهری) produce JSON with \"domain\" keys, each containing 3 ready-to-use Persian templates (form, instruction, confirmation). Also list 8 local terms/abbreviations to normalize (e.g., ش.ملی، کدپستی) and guidance on when to add قید مسئولیت‌پذیری یا ارجاع به مشاور رسمی. کانتکست: [سرویس هدف]. خروجی فقط JSON."}, {"id": 6, "title": "حریم خصوصی و میزبانی مناسب", "prompt": "You are a privacy engineer writing Persian guidance for hosting an AI web app for Iranian users. Provide: a privacy-first checklist (data minimization, consent banners, retention TTLs), a sample Persian privacy snippet for collecting voice/text (<=120 words), and encryption + hosting recommendations (self-hosted, VPS, local datacenter) with pros/cons as 3 bullets each. کانتکست: [نوع سرویس]. Checklist + snippet + hosting bullets."}, {"id": 7, "title": "یکپارچگی درگاه پرداخت و پیام‌رسان", "prompt": "You are an integrations engineer. In Persian, for the gateway [درگاه هدف] produce: description of the webhook flow (درگاه پرداخت → callback → verify → notify user), sample webhook verification pseudocode (verify amount, idempotency key, failed/duplicate/cancelled handling), and Persian copy for receipts + Telegram share message templates. Pseudocode + UI copy."}, {"id": 8, "title": "فیلتر و بازبینی انسان‌محور محتوای حساس", "prompt": "You are a content-moderation architect. Provide a Persian moderation workflow for [دامنه محتوا]: automated filters (regex + classifier) with illustrative thresholds, triage rules mapping classifier score → action (auto-allow / flag / block), human review UI checklist with 3 key fields for the moderator, and two escalation prompts in Persian (one to the user, one to the legal team) plus an appeal flow. Rules + two example prompts."}, {"id": 9, "title": "کش سروری مدل‌ها و قالب‌های پرامپت", "prompt": "You are a backend engineer optimizing model latency and cost. In Persian, describe: caching strategy for model responses (key design, TTLs, invalidation), example Redis key patterns for user-intent caching (tenant, version, hash, no PII), and 5 reusable short prompt templates for frequent tasks [لیست وظایف] with parameterization. Return Redis examples + prompt templates as JSON."}, {"id": 10, "title": "آنالیتیکس، شخصی‌سازی محرمانه و بازخورد", "prompt": "You are a product-analytics lead. In Persian, produce: a table of 12 analytics events (name + properties) for chatbot interactions, a privacy-preserving personalization plan (on-device client profile + hashed pseudonymous identifiers + opt-out), an example SQL query computing weekly active users and top intents (timezone/consent aware), and short Persian copy for consent and \"forget me\" flow. Events table + SQL + consent copy."}];
+  var ABOUT = "مهندس جان — امیررضا احمدی‌نژاد؛ معمار سیستم‌های Agentic AI، متخصص هوش مصنوعی، طراح اتوماسیون، مدیر محصول و بنیان‌گذار آژانس دیجیتال مارکتینگ.\nمهارت‌ها: Python، n8n، API integration، multi-agent workflow orchestration، prompt engineering، استراتژی محصول، SEO، برندینگ.\nاصول کار: systemization، automation، MVP، scalability، documentation، optimization.\nمنبع: دستورات شخصی‌سازی و پروفایل کاری — مهندس جان (بخش۱). این بخش صرفاً نمای عمومی است؛ اطلاعات خصوصی یا تماس درج نشده است.";
+  var LABEL='کتابخانه پرامپت';
+  function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+  function build(){
+    if(document.getElementById('pl-btn'))return;
+    var b=document.createElement('button');
+    b.id='pl-btn'; b.type='button'; b.textContent=LABEL;
+    b.setAttribute('aria-haspopup','dialog'); b.setAttribute('aria-controls','pl-overlay');
+    b.style.cssText='position:fixed;bottom:18px;left:18px;z-index:99999;direction:rtl;font-family:Tahoma,Vazirmatn,sans-serif;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(20,24,32,.72);color:#e8eaf0;backdrop-filter:blur(8px);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35);';
+    b.addEventListener('click',open);
+    document.body.appendChild(b);
+    var ov=document.createElement('div');
+    ov.id='pl-overlay'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','false'); ov.setAttribute('aria-label','کتابخانه پرامپت');
+    ov.style.cssText='display:none;position:fixed;inset:0;z-index:100000;direction:rtl;font-family:Tahoma,Vazirmatn,sans-serif;background:rgba(6,8,12,.55);backdrop-filter:blur(10px);';
+    ov.innerHTML=
+      '<div id="pl-panel" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(860px,94vw);height:min(86vh,760px);background:rgba(18,22,30,.88);border:1px solid rgba(255,255,255,.18);border-radius:16px;color:#e8eaf0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5);">'+
+      '<div style="display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.12);flex-wrap:wrap;">'+
+      '<strong style="font-size:15px;">کتابخانه پرامپت</strong>'+
+      '<button type="button" data-pl-tab="overview" style="plbtn">درباره من</button>'+
+      '<button type="button" data-pl-tab="library" style="plbtn">پرامپت‌ها</button>'+
+      '<button type="button" id="pl-export" style="plbtn">دریافت JSON</button>'+
+      '<span style="flex:1"></span>'+
+      '<button type="button" id="pl-close" aria-label="بستن" style="plbtn">✕ بستن</button>'+
+      '</div>'+
+      '<div id="pl-body" tabindex="0" style="flex:1;overflow:auto;padding:14px 16px;line-height:1.8;font-size:14px;"></div>'+
+      '</div>';
+    ov.querySelectorAll('button[data-pl-tab],#pl-export,#pl-close').forEach(function(el){
+      var s='plbtn';
+      el.style.cssText='direction:rtl;font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#e8eaf0;cursor:pointer;';
+    });
+    document.body.appendChild(ov);
+    document.getElementById('pl-close').addEventListener('click',close);
+    ov.addEventListener('click',function(e){if(e.target===ov)close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov.style.display!=='none')close();});
+    ov.querySelector('[data-pl-tab="overview"]').addEventListener('click',function(){renderOverview();});
+    ov.querySelector('[data-pl-tab="library"]').addEventListener('click',function(){renderLibrary();});
+    document.getElementById('pl-export').addEventListener('click',exportJson);
+  }
+  function copyText(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){flash('کپی شد ✓');},function(){fallbackCopy(t);});}
+    else fallbackCopy(t);
+  }
+  function fallbackCopy(t){
+    var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.focus();ta.select();
+    var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);flash(ok?'کپی شد ✓':'کپی ناموفق — متن را دستی انتخاب کنید');
+  }
+  function flash(msg){
+    var el=document.getElementById('pl-flash');if(!el){el=document.createElement('div');el.id='pl-flash';el.style.cssText='position:fixed;bottom:70px;left:18px;z-index:100001;direction:rtl;font-family:Tahoma,sans-serif;font-size:12px;background:rgba(20,24,32,.9);color:#fff;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);';document.body.appendChild(el);}
+    el.textContent=msg;clearTimeout(el._t);el._t=setTimeout(function(){el.remove();},2200);
+  }
+  function renderOverview(){
+    var body=document.getElementById('pl-body');body.innerHTML='';
+    var h=document.createElement('h3');h.textContent='درباره من (پروفایل بروز‌شده)';h.style.marginTop='0';body.appendChild(h);
+    ABOUT.split('\n').forEach(function(line){var p=document.createElement('p');p.textContent=line;p.style.margin='4px 0';body.appendChild(p);});
+    var h2=document.createElement('h3');h2.textContent='کتابخانه پرامپت (۱۲ قالب — نمای کلی)';body.appendChild(h2);
+    var note=document.createElement('p');note.textContent='توجه: این قالب‌ها صرفاً پرامپت‌های آماده هستند و بک‌اند/سرویس خاصی پیاده‌سازی نشده است. در هر پرامپت، بخش داخل [کروشه] را با کانتکست کار خود جایگزین کنید. خروجی‌ها را به فارسی درخواست کنید.';note.style.cssText='color:#ffd479;font-size:13px;';body.appendChild(note);
+    var ol=document.createElement('ol');CARDS.forEach(function(c){var li=document.createElement('li');li.textContent=c.title;ol.appendChild(li);});body.appendChild(ol);
+    var b=document.createElement('button');b.type='button';b.textContent='رفتن به پرامپت‌ها';b.style.cssText='plbtn';b.addEventListener('click',renderLibrary);body.appendChild(b);
+  }
+  function renderLibrary(){
+    var body=document.getElementById('pl-body');body.innerHTML='';
+    var note=document.createElement('p');note.textContent='قالب‌های پرامپت آماده (backend پیاده‌سازی نشده). برای کپی، دکمه «کپی پرامپت» را بزنید.';note.style.cssText='color:#ffd479;font-size:13px;';body.appendChild(note);
+    CARDS.forEach(function(c,i){
+      var card=document.createElement('section');
+      card.id='pl-card-'+c.id;
+      card.setAttribute('data-pl-card',String(c.id));
+      card.style.cssText='background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;margin:10px 0;';
+      var h=document.createElement('h4');h.textContent='پرامپت '+c.id+' — '+c.title;h.style.cssText='margin:0 0 8px;font-size:14px;';card.appendChild(h);
+      var pre=document.createElement('pre');pre.textContent=c.prompt;pre.style.cssText='white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.35);padding:10px;border-radius:8px;font-size:12.5px;line-height:1.7;direction:rtl;margin:0 0 8px;';card.appendChild(pre);
+      var b=document.createElement('button');b.type='button';b.textContent='کپی پرامپت';
+      b.style.cssText='direction:rtl;font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;';
+      b.addEventListener('click',function(){copyText(c.prompt);});
+      card.appendChild(b);
+      body.appendChild(card);
+    });
+  }
+  function exportJson(){
+    var blob=new Blob([JSON.stringify(CARDS,null,2)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='prompt-library-fa.json';document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);flash('فایل JSON دانلود شد');
+  }
+  function selectCard(n){
+    open();renderLibrary();
+    var el=document.getElementById('pl-card-'+n);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.style.outline='2px solid #6cf';setTimeout(function(){el.style.outline='';},2000);}
+  }
+  function open(){build();document.getElementById('pl-overlay').style.display='block';renderOverview();}
+  function close(){var ov=document.getElementById('pl-overlay');if(ov)ov.style.display='none';}
+  // Enter interception: capture phase, only for library-related inputs
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter')return;
+    var t=e.target; if(!t||t.tagName!=='INPUT')return;
+    var v=(t.value||'').trim().toLowerCase();
+    if(v==='prompts'||v==='prompt library'||/^prompt\s+([1-9]|10)$/.test(v)||v==='sources'){
+      e.preventDefault();e.stopPropagation();
+      t.value='';
+      var m=v.match(/^prompt\s+([1-9]|10)$/);
+      if(m)selectCard(m[1]);else open();
+    }
+  },true);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
+})();
+</script>
+
+<script>document.getElementById("langToggle").onclick=()=>{document.documentElement.lang=document.documentElement.lang==="en"?"fa":"en";document.body.dir=document.documentElement.lang==="fa"?"rtl":"ltr";document.getElementById("langToggle").textContent=document.documentElement.lang==="fa"?"🇮🇷 فارسی · 🇬🇧 EN":"🇬🇧 EN · 🇮🇷 فارسی"}</script></body>
+</html>
+
+
+

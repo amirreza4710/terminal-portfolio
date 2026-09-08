@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dracula">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibe Coder — Portfolio Terminal</title>
+    <style>
+        :root {
+            --accent: #bd93f9;
+            --accent-glow: rgba(189, 147, 249, 0.35);
+            --bg: #282a36;
+            --fg: #f8f8f2;
+            --fg-dim: #a0a0b0;
+            --user: #50fa7b;
+            --at: #888899;
+            --dir: #8be9fd;
+            --prompt-sym: #ff79c6;
+            --error: #ff5555;
+            --success: #50fa7b;
+            --border-hairline: rgba(255, 255, 255, 0.12);
+            --chrome-bg: rgba(20, 22, 34, 0.72);
+            --chrome-fg: #c8c8d4;
+            --output-bg: rgba(20, 22, 34, 0.55);
+            --output-bg-solid: #1a1c28;
+            --scrollbar-thumb: rgba(189, 147, 249, 0.35);
+            --scrollbar-track: transparent;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --tag-bg: rgba(189, 147, 249, 0.18);
+            --tag-fg: #d4bfff;
+            --matrix-green: #50fa7b;
+           --bar-gradient-from: #bd93f9;
+           --bar-gradient-to: #50fa7b;
+           --desktop-grad-1: #1b1f3a;
+           --desktop-grad-2: #3b2a6b;
+           --desktop-grad-3: #0f4c5c;
+           --desktop-grad-4: #08090f;
+           --blob-1: rgba(189, 147, 249, 0.28);
+           --blob-2: rgba(15, 76, 92, 0.35);
+           --dock-bg: rgba(15, 17, 26, 0.65);
+           --dock-border: rgba(255, 255, 255, 0.1);
+           --tab-active: rgba(255, 255, 255, 0.12);
+           --tab-inactive: rgba(255, 255, 255, 0.05);
+           --shadow-deep-1: 0 25px 60px rgba(0, 0, 0, 0.55);
+           --shadow-deep-2: 0 12px 30px rgba(0, 0, 0, 0.45);
+           --tap-pill-bg: rgba(189, 147, 249, 0.85);
+           --tap-pill-fg: #1a1c28;
+           --logo-color: #bd93f9;
+           --logo-glow: rgba(189, 147, 249, 0.5);
+           --card-hover-lift: -4px;
+           --transition-ease: cubic-bezier(0.22, 1, 0.36, 1);
+           --transition-fast: 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+           --transition-med: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+           --transition-slow: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+           --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+           --window-radius: 14px;
+           --window-max-w: 980px;
+           --window-max-h: 680px;
+           --dock-height: 68px;
+           --bar-border-radius: 6px;
+           --bar-height: 20px;
+           --social-grid-gap: 8px;
+           --status-active: #50fa7b;
+           --status-mvp: #f1fa8c;
+           --status-archived: #888;
+           --tier-expert: #50fa7b;
+           --tier-advanced: #8be9fd;
+           --tier-proficient: #f1fa8c;
+        }
+
+        html[data-theme="solarized"] {
+            --accent: #b58900;
+            --accent-glow: rgba(181, 137, 0, 0.3);
+            --bg: #002b36;
+            --fg: #839496;
+            --fg-dim: #586e75;
+            --user: #859900;
+            --at: #586e75;
+            --dir: #2aa198;
+            --prompt-sym: #d33682;
+            --error: #dc322f;
+            --success: #859900;
+            --border-hairline: rgba(255, 255, 255, 0.08);
+            --chrome-bg: rgba(0, 20, 25, 0.72);
+            --chrome-fg: #93a1a1;
+            --output-bg: rgba(0, 28, 33, 0.6);
+            --output-bg-solid: #002b36;
+            --scrollbar-thumb: rgba(181, 137, 0, 0.35);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --tag-bg: rgba(181, 137, 0, 0.2);
+            --tag-fg: #d4a800;
+            --matrix-green: #859900;
+            --bar-gradient-from: #b58900;
+            --bar-gradient-to: #2aa198;
+            --desktop-grad-1: #00141a;
+            --desktop-grad-2: #002b36;
+            --desktop-grad-3: #1a3d3a;
+            --desktop-grad-4: #000a0d;
+            --blob-1: rgba(181, 137, 0, 0.2);
+            --blob-2: rgba(42, 161, 152, 0.25);
+            --dock-bg: rgba(0, 15, 18, 0.7);
+            --dock-border: rgba(255, 255, 255, 0.08);
+            --tab-active: rgba(255, 255, 255, 0.09);
+            --tab-inactive: rgba(255, 255, 255, 0.04);
+            --tap-pill-bg: rgba(181, 137, 0, 0.85);
+            --tap-pill-fg: #002b36;
+            --logo-color: #b58900;
+            --logo-glow: rgba(181, 137, 0, 0.45);
+        }
+
+        html[data-theme="nord"] {
+            --accent: #88c0d0;
+            --accent-glow: rgba(136, 192, 208, 0.3);
+            --bg: #2e3440;
+            --fg: #d8dee9;
+            --fg-dim: #7b88a1;
+            --user: #a3be8c;
+            --at: #7b88a1;
+            --dir: #88c0d0;
+            --prompt-sym: #b48ead;
+            --error: #bf616a;
+            --success: #a3be8c;
+            --border-hairline: rgba(255, 255, 255, 0.1);
+            --chrome-bg: rgba(30, 34, 43, 0.72);
+            --chrome-fg: #d8dee9;
+            --output-bg: rgba(25, 28, 36, 0.55);
+            --output-bg-solid: #242833;
+            --scrollbar-thumb: rgba(136, 192, 208, 0.35);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --tag-bg: rgba(136, 192, 208, 0.18);
+            --tag-fg: #b0d8e4;
+            --matrix-green: #a3be8c;
+            --bar-gradient-from: #88c0d0;
+            --bar-gradient-to: #a3be8c;
+            --desktop-grad-1: #1b1f2e;
+            --desktop-grad-2: #2e3440;
+            --desktop-grad-3: #3b4252;
+            --desktop-grad-4: #0d0e13;
+            --blob-1: rgba(136, 192, 208, 0.2);
+            --blob-2: rgba(163, 190, 140, 0.22);
+            --dock-bg: rgba(18, 20, 26, 0.7);
+            --dock-border: rgba(255, 255, 255, 0.08);
+            --tab-active: rgba(255, 255, 255, 0.09);
+            --tab-inactive: rgba(255, 255, 255, 0.04);
+            --tap-pill-bg: rgba(136, 192, 208, 0.85);
+            --tap-pill-fg: #2e3440;
+            --logo-color: #88c0d0;
+            --logo-glow: rgba(136, 192, 208, 0.45);
+        }
+
+        html[data-theme="paper"] {
+            --accent: #b3541e;
+            --accent-glow: rgba(179, 84, 30, 0.22);
+            --bg: #fbf8f1;
+            --fg: #4a3f35;
+            --fg-dim: #8a7d6f;
+            --user: #2e7d32;
+            --at: #8a7d6f;
+            --dir: #00695c;
+            --prompt-sym: #c2185b;
+            --error: #c62828;
+            --success: #2e7d32;
+            --border-hairline: rgba(0, 0, 0, 0.12);
+            --chrome-bg: rgba(245, 240, 230, 0.8);
+            --chrome-fg: #4a3f35;
+            --output-bg: rgba(250, 247, 240, 0.72);
+            --output-bg-solid: #f5f0e6;
+            --scrollbar-thumb: rgba(179, 84, 30, 0.3);
+            --card-bg: rgba(0, 0, 0, 0.04);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --tag-bg: rgba(179, 84, 30, 0.15);
+            --tag-fg: #8a4a1e;
+            --matrix-green: #2e7d32;
+            --bar-gradient-from: #b3541e;
+            --bar-gradient-to: #2e7d32;
+            --desktop-grad-1: #e8e0d0;
+            --desktop-grad-2: #d4c4b0;
+            --desktop-grad-3: #b0a090;
+            --desktop-grad-4: #8a7d6f;
+            --blob-1: rgba(179, 84, 30, 0.15);
+            --blob-2: rgba(46, 125, 50, 0.12);
+            --dock-bg: rgba(240, 235, 225, 0.75);
+            --dock-border: rgba(0, 0, 0, 0.1);
+            --tab-active: rgba(0, 0, 0, 0.08);
+            --tab-inactive: rgba(0, 0, 0, 0.03);
+            --tap-pill-bg: rgba(179, 84, 30, 0.85);
+            --tap-pill-fg: #fbf8f1;
+            --logo-color: #b3541e;
+            --logo-glow: rgba(179, 84, 30, 0.35);
+            --shadow-deep-1: 0 25px 60px rgba(0, 0, 0, 0.25);
+            --shadow-deep-2: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            background: var(--desktop-grad-4);
+            color: var(--fg);
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.5s ease;
+        }
+
+        .desktop-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(ellipse at 20% 20%, var(--desktop-grad-1) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 15%, var(--desktop-grad-2) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 75%, var(--desktop-grad-3) 0%, transparent 55%),
+                radial-gradient(ellipse at 10% 85%, var(--desktop-grad-4) 0%, transparent 60%),
+                var(--desktop-grad-4);
+            transition: background 0.6s ease;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            animation: blobDrift 22s infinite alternate ease-in-out;
+            transition: background 0.6s ease;
+        }
+        .blob-1 {
+            width: 420px;
+            height: 420px;
+            background: var(--blob-1);
+            top: -5%;
+            left: -8%;
+            animation-duration: 26s;
+        }
+        .blob-2 {
+            width: 380px;
+            height: 380px;
+            background: var(--blob-2);
+            bottom: -8%;
+            right: -5%;
+            animation-duration: 30s;
+            animation-delay: -8s;
+        }
+
+        @keyframes blobDrift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(45px, -35px) scale(1.08);
+            }
+            66% {
+                transform: translate(-30px, 30px) scale(0.95);
+            }
+            100% {
+                transform: translate(20px, -15px) scale(1.05);
+            }
+        }
+
+        .terminal-window {
+            position: relative;
+            z-index: 10;
+            width: min(var(--window-max-w), calc(100vw - 32px));
+            height: min(var(--window-max-h), calc(100vh - var(--dock-height) - 48px));
+            min-height: 320px;
+            border-radius: var(--window-radius);
+            background: var(--output-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-hairline);
+            box-shadow: var(--shadow-deep-1), var(--shadow-deep-2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background 0.5s ease, border-color 0.5s ease;
+        }
+
+        .window-chrome {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--chrome-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-hairline);
+            gap: 12px;
+            flex-shrink: 0;
+            min-height: 48px;
+            transition: background 0.5s ease, border-color 0.5s ease;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+        .traffic-lights span {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.2s ease;
+        }
+        .traffic-lights span:hover {
+            transform: scale(1.2);
+            opacity: 0.85;
+        }
+        .tl-red {
+            background: #ff5f57;
+        }
+        .tl-yellow {
+            background: #febc2e;
+        }
+       .tl-green {
+           background: #28c840;
+       }
+
+        .terminal-window.minimized {
+            transform: translateY(calc(100vh - 120px)) scale(0.6);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .terminal-window.minimized .terminal-body,
+        .terminal-window.minimized .window-chrome { pointer-events: none; }
+        .terminal-window.closed {
+            display: none;
+        }
+        .reopen-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .reopen-btn.visible {
+            display: flex;
+           align-items: center;
+           justify-content: center;
+       }
+
+        .cta-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            z-index: 1000;
+            box-shadow: 0 4px 16px var(--accent-glow);
+            font-family: var(--font-mono);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px var(--accent-glow);
+        }
+
+       .window-tabs {
+            display: flex;
+            gap: 4px;
+            flex: 1;
+            align-items: center;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .tab {
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--chrome-fg);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease;
+            letter-spacing: -0.01em;
+            background: var(--tab-inactive);
+            border: none;
+            font-family: var(--font-mono);
+        }
+        .tab.active {
+            background: var(--tab-active);
+            color: var(--fg);
+        }
+        .tab:hover:not(.active) {
+            background: var(--tab-active);
+        }
+
+        .lang-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            background: var(--tab-inactive);
+            border-radius: 999px;
+            padding: 3px;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--border-hairline);
+            transition: border-color 0.3s ease;
+        }
+        .lang-toggle-container:hover {
+            border-color: var(--accent);
+        }
+        .lang-option {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.3s var(--transition-ease), color 0.3s var(--transition-ease);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--font-mono);
+            color: var(--fg-dim);
+            border: none;
+            background: transparent;
+        }
+        .lang-option.active {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+        .lang-option .flag {
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .terminal-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
+            transition: background 0.5s ease;
+        }
+
+        .terminal-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 18px 10px;
+            font-size: 13.5px;
+            line-height: 1.65;
+            letter-spacing: 0.01em;
+            color: var(--fg);
+            transition: color 0.4s ease;
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+            min-height: 0;
+            word-break: break-word;
+            overscroll-behavior: contain;
+        }
+        .terminal-output::-webkit-scrollbar {
+            width: 5px;
+        }
+        .terminal-output::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 10px;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            padding: 8px 18px 14px;
+            gap: 0;
+            flex-shrink: 0;
+            font-size: 13.5px;
+            line-height: 1.65;
+            position: relative;
+            transition: opacity 0.3s ease;
+        }
+        .prompt-text {
+            white-space: nowrap;
+            flex-shrink: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .prompt-user {
+            color: var(--user);
+            font-weight: 600;
+        }
+        .prompt-at {
+            color: var(--at);
+        }
+        .prompt-dir {
+            color: var(--dir);
+        }
+        .prompt-sym {
+            color: var(--prompt-sym);
+            margin-left: 4px;
+            margin-right: 6px;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 13.5px;
+            letter-spacing: 0.01em;
+            caret-color: var(--accent);
+            min-width: 0;
+            padding: 0;
+            transition: color 0.4s ease;
+        }
+        .terminal-input::placeholder {
+            color: var(--fg-dim);
+            opacity: 0.5;
+        }
+
+        .cursor-block {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--accent);
+            vertical-align: text-bottom;
+            margin-left: 2px;
+            animation: blinkCursor 1.1s step-end infinite;
+            flex-shrink: 0;
+            border-radius: 2px;
+            transition: opacity 0.25s ease;
+        }
+        .terminal-window.input-unfocused .cursor-block {
+            opacity: 0.25;
+        }
+        @keyframes blinkCursor {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .tap-to-type {
+            position: absolute;
+            right: 18px;
+            bottom: 52px;
+            background: var(--tap-pill-bg);
+            color: var(--tap-pill-fg);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+            pointer-events: none;
+            animation: pulsePill 2.2s ease-in-out infinite;
+            z-index: 5;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .tap-to-type.visible {
+            opacity: 1;
+        }
+        @keyframes pulsePill {
+            0%,
+            100% {
+                transform: translateY(0);
+                box-shadow: 0 2px 10px var(--accent-glow);
+            }
+            50% {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px var(--accent-glow);
+            }
+        }
+
+        .ascii-logo {
+            font-size: 8px;
+            line-height: 1.15;
+            color: var(--logo-color);
+            text-shadow: 0 0 12px var(--logo-glow), 0 0 30px var(--logo-glow);
+            white-space: pre;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin: 4px 0 6px;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        @media (max-width: 480px) {
+            .ascii-logo {
+                font-size: 5.5px;
+                letter-spacing: -0.04em;
+            }
+        }
+        @media (max-width: 360px) {
+            .ascii-logo {
+                font-size: 4.5px;
+            }
+        }
+
+        .output-line {
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 2px;
+            transition: color 0.3s ease;
+        }
+        .output-line.dim {
+            color: var(--fg-dim);
+        }
+        .output-line.error {
+            color: var(--error);
+        }
+        .output-line.success {
+            color: var(--success);
+        }
+        .output-line.accent {
+            color: var(--accent);
+        }
+
+        .cmd-history-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            margin-bottom: 2px;
+        }
+        .cmd-history-line .prompt-part {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px 24px;
+            margin: 6px 0;
+        }
+        .help-item {
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+        .help-cmd {
+            color: var(--accent);
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 72px;
+            flex-shrink: 0;
+        }
+        .help-desc {
+            color: var(--fg-dim);
+        }
+
+        .about-table {
+            margin: 8px 0;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .about-row {
+            display: flex;
+            gap: 12px;
+            align-items: baseline;
+        }
+        .about-key {
+            color: var(--accent);
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 130px;
+            flex-shrink: 0;
+        }
+        .about-val {
+            color: var(--fg);
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin: 8px 0;
+        }
+        .skill-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .skill-label {
+            min-width: 120px;
+            color: var(--fg);
+            font-weight: 500;
+            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+       .skill-bar-track {
+           flex: 1;
+            height: var(--bar-height);
+           background: var(--card-bg);
+           border-radius: var(--bar-border-radius);
+           overflow: hidden;
+           position: relative;
+           border: 1px solid var(--card-border);
+       }
+       .skill-bar-fill {
+           height: 100%;
+           border-radius: var(--bar-border-radius);
+            background: linear-gradient(135deg, var(--bar-gradient-from), var(--bar-gradient-to));
+           width: 0%;
+           transition: width 0.8s var(--transition-ease);
+           position: relative;
+       }
+       .skill-bar-fill.animated {
+           width: var(--target-width);
+       }
+       .skill-pct {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+           color: var(--fg-dim);
+            font-size: 10px;
+           font-weight: 600;
+            z-index: 2;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            pointer-events: none;
+       }
+
+        .projects-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .project-card {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 3.5px solid var(--accent);
+            transition: transform 0.25s var(--transition-ease), box-shadow 0.25s var(--transition-ease),
+                background 0.3s ease, border-color 0.3s ease;
+            cursor: default;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: cardRiseIn 0.55s var(--transition-ease) forwards;
+        }
+        .project-card:nth-child(1) {
+            animation-delay: 0.06s;
+        }
+        .project-card:nth-child(2) {
+            animation-delay: 0.14s;
+        }
+        .project-card:nth-child(3) {
+            animation-delay: 0.22s;
+        }
+        .project-card:nth-child(4) {
+            animation-delay: 0.30s;
+        }
+        .project-card:hover {
+            transform: translateY(var(--card-hover-lift));
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+            background: var(--tab-active);
+        }
+        @keyframes cardRiseIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .project-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: var(--accent);
+            margin-bottom: 3px;
+            letter-spacing: -0.01em;
+        }
+        .project-desc {
+            font-size: 12px;
+            color: var(--fg-dim);
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag-pill {
+            padding: 2.5px 9px;
+            border-radius: 999px;
+            background: var(--tag-bg);
+            color: var(--tag-fg);
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        .matrix-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            background: var(--bg);
+            border-radius: 0;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            display: none;
+        }
+        .matrix-canvas.active {
+            display: block;
+            pointer-events: auto;
+        }
+
+        .history-list {
+            margin: 4px 0;
+            font-size: 12.5px;
+            line-height: 1.55;
+        }
+        .history-num {
+            color: var(--accent);
+            font-weight: 600;
+            min-width: 36px;
+            display: inline-block;
+        }
+
+        .dock {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            padding: 10px 16px;
+            margin-top: 14px;
+            background: var(--dock-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-radius: 20px;
+            border: 1px solid var(--dock-border);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transition: background 0.5s ease, border-color 0.5s ease;
+            align-items: flex-end;
+        }
+        .dock-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--bar-gradient-to));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.28s var(--transition-ease), box-shadow 0.28s var(--transition-ease);
+            position: relative;
+            flex-shrink: 0;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+        }
+        .dock-icon:hover {
+            transform: scale(1.28) translateY(-8px);
+            box-shadow: 0 10px 26px var(--accent-glow), 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+        }
+        .dock-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--bg);
+            pointer-events: none;
+        }
+        .dock-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: var(--chrome-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--fg);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 7px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s var(--transition-ease);
+            border: 1px solid var(--border-hairline);
+            font-family: var(--font-mono);
+            letter-spacing: 0.02em;
+        }
+        .dock-icon:hover .dock-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .dock {
+                gap: 7px;
+                padding: 8px 10px;
+                margin-top: 8px;
+                border-radius: 16px;
+            }
+            .dock-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+            }
+            .dock-icon svg {
+                width: 17px;
+                height: 17px;
+            }
+            .terminal-window {
+                width: calc(100vw - 16px);
+                height: calc(100vh - var(--dock-height) - 28px);
+                height: calc(100dvh - var(--dock-height) - 28px);
+                border-radius: 10px;
+            }
+            .window-chrome {
+                padding: 7px 9px;
+                gap: 7px;
+                min-height: 40px;
+            }
+            .traffic-lights span {
+                width: 10px;
+                height: 10px;
+            }
+            .traffic-lights {
+                gap: 5px;
+            }
+            .tab {
+                font-size: 10px;
+                padding: 3.5px 7px;
+                border-radius: 5px;
+            }
+            .lang-option {
+                padding: 3px 7px;
+                font-size: 10.5px;
+                gap: 3px;
+            }
+            .lang-option .flag {
+                font-size: 12px;
+            }
+            .terminal-output {
+                padding: 10px 10px 6px;
+                font-size: 12px;
+                line-height: 1.55;
+            }
+            .terminal-input-line {
+                padding: 6px 10px 10px;
+                font-size: 12px;
+            }
+            .terminal-input {
+                font-size: 12px;
+            }
+            .cursor-block {
+                width: 6px;
+                height: 13px;
+            }
+            .help-grid {
+                grid-template-columns: 1fr;
+                gap: 2px 12px;
+            }
+            .skill-label {
+                min-width: 80px;
+                font-size: 10.5px;
+            }
+            .skill-bar-track {
+                height: 14px;
+            }
+            .skill-pct {
+                font-size: 10px;
+                min-width: 26px;
+            }
+            .about-key {
+                min-width: 90px;
+                font-size: 11px;
+            }
+            .about-table {
+                font-size: 11.5px;
+            }
+            .project-card {
+                padding: 9px 11px;
+                border-left-width: 3px;
+            }
+            .project-title {
+                font-size: 12px;
+            }
+            .project-desc {
+                font-size: 11px;
+            }
+            .tag-pill {
+                font-size: 9.5px;
+                padding: 2px 7px;
+            }
+            .tap-to-type {
+                right: 10px;
+                bottom: 44px;
+                font-size: 10px;
+                padding: 5px 11px;
+            }
+            .ascii-logo {
+                font-size: 5px;
+                line-height: 1.1;
+                margin: 2px 0 4px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .blob {
+                animation: none !important;
+            }
+            .cursor-block {
+                animation: none !important;
+                opacity: 0.7;
+            }
+            .tap-to-type {
+                animation: none !important;
+            }
+            .skill-bar-fill {
+                transition: none !important;
+            }
+            .project-card {
+                animation: none !important;
+                opacity: 1;
+                transform: none;
+            }
+            .dock-icon {
+                transition: transform 0.1s ease;
+            }
+            .dock-icon:hover {
+                transform: scale(1.08) translateY(-3px);
+            }
+            .ascii-logo {
+                text-shadow: none;
+            }
+           .lang-option {
+               transition: none;
+           }
+       }
+
+        .skill-bar-fill.tier-expert {
+            background: linear-gradient(90deg, var(--accent), var(--tier-expert));
+        }
+        .skill-bar-fill.tier-advanced {
+            background: linear-gradient(90deg, var(--accent), var(--tier-advanced));
+        }
+        .skill-bar-fill.tier-proficient {
+            background: linear-gradient(90deg, var(--accent), var(--tier-proficient));
+        }
+
+        .skill-bar-track {
+            height: var(--bar-height);
+        }
+        .skill-bar-track::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: var(--chrome-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--fg);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 7px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s var(--transition-ease);
+            border: 1px solid var(--border-hairline);
+            font-family: var(--font-mono);
+            z-index: 10;
+        }
+        .skill-bar-track:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .skill-category {
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 10px 0 4px;
+            padding-bottom: 2px;
+           border-bottom: 1px dashed var(--border-hairline);
+       }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .project-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .project-title a:hover {
+            text-decoration: underline;
+            color: var(--accent);
+        }
+        .status-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status-badge.active {
+            background: rgba(80, 250, 123, 0.15);
+            color: var(--status-active);
+        }
+        .status-badge.mvp {
+            background: rgba(241, 250, 140, 0.15);
+            color: var(--status-mvp);
+        }
+        .status-badge.archived {
+            background: rgba(136, 136, 136, 0.15);
+            color: var(--status-archived);
+        }
+
+        .terminal-window:not(.input-unfocused) .prompt-sym {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 4px var(--prompt-sym); }
+            50% { text-shadow: 0 0 14px var(--prompt-sym), 0 0 28px var(--prompt-sym); }
+        }
+
+        .last-updated {
+            position: absolute;
+            bottom: 6px;
+            right: 14px;
+            font-size: 9.5px;
+            color: var(--fg-dim);
+            opacity: 0.45;
+            font-family: var(--font-mono);
+            pointer-events: none;
+        }
+        @media (max-width: 640px) {
+            .last-updated {
+                font-size: 8px;
+                bottom: 4px;
+                right: 8px;
+            }
+        }
+
+        .dock-icon {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: dockSlideUp 0.5s var(--transition-ease) forwards;
+        }
+        .dock-icon:nth-child(1) { animation-delay: 0.05s; }
+        .dock-icon:nth-child(2) { animation-delay: 0.12s; }
+        .dock-icon:nth-child(3) { animation-delay: 0.19s; }
+        .dock-icon:nth-child(4) { animation-delay: 0.26s; }
+        .dock-icon:nth-child(5) { animation-delay: 0.33s; }
+        @keyframes dockSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .dock-icon {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .completion-dropdown {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            margin: 4px 0;
+            padding: 6px 10px;
+            background: var(--output-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-hairline);
+        }
+
+        .toast {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body data-lang="en">
+
+    <div class="desktop-bg" id="desktopBg"></div>
+    <div class="blob blob-1" id="blob1"></div>
+    <div class="blob blob-2" id="blob2"></div>
+
+    <div class="terminal-window" id="terminalWindow">
+        <div class="window-chrome" id="windowChrome">
+            <div class="traffic-lights">
+                <span class="tl-red" id="tlRed" title="Close"></span>
+                <span class="tl-yellow" id="tlYellow" title="Minimize"></span>
+                <span class="tl-green" id="tlGreen" title="Maximize"></span>
+            </div>
+            <div class="window-tabs" id="windowTabs">
+                <button class="tab active" data-tab="terminal" id="tabTerminal" title="Terminal">vibe@coder — zsh</button>
+                <button class="tab" data-tab="notes" id="tabNotes" title="Notes">notes.md</button>
+                <button class="tab" data-tab="log" id="tabLog" title="Server Log">server.log</button>
+            </div>
+            <div class="lang-toggle-container" id="langToggle" title="Switch Language">
+                <button class="lang-option active" data-lang="en" id="langEn">
+                    <span class="flag">&#127468;&#127463;</span> EN
+                </button>
+               <button class="lang-option" data-lang="fa" id="langFa">
+                    <span class="flag">&#127468;&#127472;</span> IR
+               </button>
+            </div>
+        </div>
+
+        <div class="terminal-body" id="terminalBody">
+            <div class="terminal-output" id="terminalOutput"></div>
+            <div class="tap-to-type" id="tapPill">Tap to type</div>
+           <div class="terminal-input-line" id="inputLine">
+               <span class="prompt-text" id="promptText">
+                   <span class="prompt-user">amirreza</span><span class="prompt-at">@</span><span class="prompt-dir">vibe-coder</span>
+                   <span class="prompt-sym">❯</span>
+               </span>
+               <input type="text" class="terminal-input" id="terminalInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" placeholder="">
+           </div>
+            <div class="last-updated" id="lastUpdated">Updated: Sep 2026</div>
+       </div>
+   </div>
+
+    <div class="dock" id="dock">
+        <button class="dock-icon" data-command="projects" title="Projects">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <span class="dock-tooltip">Projects</span>
+        </button>
+        <button class="dock-icon" data-command="skills" title="Skills">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H6v-4h4v4zm0-6H6V7h4v4zm6 6h-4v-4h4v4zm0-6h-4V7h4v4z"/></svg>
+            <span class="dock-tooltip">Skills</span>
+        </button>
+        <button class="dock-icon" data-command="contact" title="Contact">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <span class="dock-tooltip">Contact</span>
+        </button>
+        <button class="dock-icon" data-command="themes" title="Themes">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9zm0 2a7 7 0 0 1 7 7 7 7 0 0 1-7 7 7 7 0 0 1-7-7 7 7 0 0 1 7-7zm0 2a5 5 0 0 0-5 5 5 5 0 0 0 5 5 5 5 0 0 0 5-5 5 5 0 0 0-5-5z"/></svg>
+            <span class="dock-tooltip">Themes</span>
+        </button>
+        <button class="dock-icon" data-command="about" title="About">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a6.98 6.98 0 0 1-6 3.22z"/></svg>
+            <span class="dock-tooltip">About</span>
+       </button>
+   </div>
+
+    <button class="reopen-btn" id="reopenBtn" title="Reopen Terminal">▶</button>
+    <a class="cta-btn" id="ctaBtn" href="tel:+989157077994" title="Free Consultation">📞 مشاوره رایگان</a>
+
+   <script>
+        (function() {
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const output = $('#terminalOutput');
+            const input = $('#terminalInput');
+            const inputLine = $('#inputLine');
+            const promptText = $('#promptText');
+            const terminalWindow = $('#terminalWindow');
+            const tapPill = $('#tapPill');
+            const langToggle = $('#langToggle');
+            const langEn = $('#langEn');
+            const langFa = $('#langFa');
+            const terminalBody = $('#terminalBody');
+            const dock = $('#dock');
+
+            let lang = 'en';
+            let currentTheme = 'dracula';
+            let history = [];
+            let historyIndex = -1;
+            let booted = false;
+            let matrixActive = false;
+            let matrixCanvas = null;
+            let matrixCtx = null;
+            let matrixRAF = null;
+            let matrixStartTime = 0;
+            let typingTimers = [];
+
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const isMobile = window.innerWidth <= 640;
+
+           const themes = ['dracula', 'solarized', 'nord', 'paper'];
+           const commands = [
+               'help', 'about', 'skills', 'projects', 'contact', 'theme',
+                'matrix', 'clear', 'history', 'whoami', 'date', 'echo', 'ls', 'sudo', 'neofetch', 'quote', 'cls', 'exit', 'banner', 'social'
+           ];
+
+            const T = {
+                en: {
+                    lastLogin: 'Last login: ' + new Date().toDateString() + ' from 127.0.0.1',
+                    welcome: 'Welcome to Vibe Coder — the portfolio terminal of Amirreza Ahmadynezhad.',
+                    hint: 'Type "help" for available commands.',
+                    helpTitle: 'Available Commands:',
+                    helpCmd: 'Command',
+                    helpDesc: 'Description',
+                    helpItems: {
+                        help: 'Show this help menu',
+                        about: 'About Amirreza — profile info',
+                        skills: 'Show skill proficiency bars',
+                        projects: 'Show project cards',
+                        contact: 'Contact information',
+                        'theme': 'Switch theme (dracula/solarized/nord/paper)',
+                        matrix: 'Easter egg — Matrix rain',
+                        clear: 'Clear the terminal screen',
+                        history: 'Show command history',
+                        whoami: 'Display current user',
+                        date: 'Show current date and time',
+                       echo: 'Echo text back',
+                       ls: 'List some files',
+                        sudo: 'Try your luck...',
+                        neofetch: 'System info display',
+                        quote: 'Show a random programming quote',
+                        cls: 'Clear the screen (alias for clear)',
+                        exit: 'Print goodbye message',
+                        banner: 'Re-print the ASCII logo',
+                        social: 'Show social links'
+                   },
+                    aboutTitle: 'Profile — Amirreza Ahmadynezhad',
+                    aboutRows: {
+                        'Name': 'Amirreza Ahmadynezhad (مهندس جان)',
+                       'Role': 'AI Agentic System Architect',
+                        'Location': 'Mashhad, Khorasan Razavi, Iran',
+                       'Focus': 'Agentic AI · Multi-Agent Systems · Automation',
+                        'Founder': 'Digital Marketing Agency',
+                        'PM': 'Product Manager & Systems Thinker'
+                    },
+                   skillsTitle: 'Skill Proficiency:',
+                   skills: [
+                        { label: 'Agentic AI', pct: 92, category: 'AI & Systems' },
+                        { label: 'Multi-Agent Systems', pct: 88, category: 'AI & Systems' },
+                        { label: 'Workflow Orchestration', pct: 85, category: 'AI & Systems' },
+                        { label: 'AI Automation', pct: 90, category: 'AI & Systems' },
+                        { label: 'Product Strategy', pct: 82, category: 'Strategy & Marketing' },
+                        { label: 'Prompt Engineering', pct: 94, category: 'AI & Systems' },
+                        { label: 'Python', pct: 87, category: 'Development' },
+                        { label: 'API Integration', pct: 86, category: 'Development' },
+                        { label: 'n8n', pct: 83, category: 'Development' },
+                        { label: 'Digital Marketing', pct: 79, category: 'Strategy & Marketing' },
+                        { label: 'SEO', pct: 81, category: 'Strategy & Marketing' },
+                        { label: 'Branding', pct: 78, category: 'Strategy & Marketing' },
+                        { label: 'Business Architecture', pct: 80, category: 'Strategy & Marketing' }
+                   ],
+                   projectsTitle: 'Projects:',
+                   projects: [
+                        { title: 'Tidewater', desc: 'AI workflow orchestration platform for enterprise automation.', url: 'https://github.com/amirreza4710', status: 'Active',
+                           tags: ['Agentic AI', 'n8n', 'Python'] },
+                        { title: 'Lantern', desc: 'Multi-agent content automation system for digital marketing.', url: 'https://github.com/amirreza4710', status: 'MVP',
+                           tags: ['Multi-Agent', 'AI Automation'] },
+                        { title: 'Fieldnotes', desc: 'SEO analytics dashboard with real-time tracking and insights.', url: '', status: 'Active',
+                           tags: ['SEO', 'API Integration'] },
+                        { title: 'Glasshouse', desc: 'Brand strategy framework for product-market fit clarity.', url: '', status: 'Archived',
+                           tags: ['Branding', 'Product Strategy'] }
+                   ],
+                    contactTitle: 'Contact Information:',
+                    contactRows: {
+                        'Phone': '+98 915 707 7994',
+                        'Email': 'amirrezaahmadynezhad@gmail.com',
+                        'Telegram': 'https://t.me/amirreza4710',
+                        'GitHub': 'https://github.com/amirreza4710',
+                        'PGP': 'Fingerprint: 4A7B 9C2E 1D8F 3B6A 5E90 C4D7 8F2B 1A3C'
+                    },
+                    themeUsage: 'Usage: theme <name> — available: dracula, solarized, nord, paper',
+                    themeSwitched: 'Theme switched to',
+                    themeInvalid: 'Theme not found. Try: dracula, solarized, nord, paper',
+                   matrixJoke: 'Wake up, Neo... The Matrix has you. (just kidding — it\'s just CSS)',
+                   sudoJoke: 'Nice try, but you are not in the sudoers file. This incident will be reported.',
+                   historyEmpty: 'No command history yet.',
+                   historyTitle: 'Command History:',
+                   tapToType: 'Tap to type',
+                   clearDone: '',
+                   unknownCmd: 'command not found',
+                   noSuchFile: 'ls: cannot access',
+                   matrixStop: '[Press any key or tap to exit Matrix]',
+                   focusHint: 'Type a command...',
+                    socialTitle: 'Social Links:',
+                    exitMsg: 'Goodbye! Session ended. Refresh the page to reconnect.',
+                    bannerTitle: 'Vibe Coder Terminal',
+                    copyToast: 'Copied! ✓',
+                    neofetchOS: 'VibeOS 24.04 LTS',
+                    neofetchHost: 'Vibe Coder Terminal',
+                    neofetchKernel: 'JavaScript ES2024',
+                    neofetchUptime: 'Since 2019',
+                    neofetchShell: 'zsh 5.9',
+                    neofetchDE: 'Browser',
+                    neofetchTerminal: 'portfolio.html',
+                    neofetchCPU: 'Human Brain @ 1.0',
+                    neofetchMemory: '8192 MB / ∞ MB',
+                    quotes: [
+                        '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler',
+                        '"First, solve the problem. Then, write the code." — John Johnson',
+                        '"The best way to predict the future is to invent it." — Alan Kay',
+                        '"Simplicity is the soul of efficiency." — Austin Freeman',
+                        '"Talk is cheap. Show me the code." — Linus Torvalds',
+                        '"Code is like humor. When you have to explain it, it\'s bad." — Cory House',
+                        '"It\'s not a bug — it\'s an undocumented feature." — Anonymous',
+                        '"The computer was born to solve problems that did not exist before." — Bill Gates',
+                        '"Programming isn\'t about what you know; it\'s about what you can figure out." — Chris Pine',
+                        '"Measuring programming progress by lines of code is like measuring aircraft building progress by weight." — Bill Gates',
+                    ],
+                    lsFiles: [
+                        'portfolio.js', 'skills.json', 'projects.md', 'contact.txt',
+                        'vibe-coder.yaml', '.env', 'README.md', 'src/'
+                    ],
+                    datePrefix: 'Current date:',
+                    echoResult: '',
+                    dirLabel: '~',
+                },
+                fa: {
+                    lastLogin: 'آخرین ورود: ' + new Date().toLocaleDateString('fa-IR') + ' از 127.0.0.1',
+                    welcome: 'به Vibe Coder خوش آمدید — ترمینال پورتفولیو امیررضا احمدی‌نژاد.',
+                    hint: 'برای دیدن دستورات، "help" را تایپ کنید.',
+                    helpTitle: 'دستورات موجود:',
+                    helpCmd: 'دستور',
+                    helpDesc: 'توضیح',
+                    helpItems: {
+                        help: 'نمایش این منوی راهنما',
+                        about: 'درباره امیررضا — اطلاعات پروفایل',
+                        skills: 'نمایش نوارهای مهارت',
+                        projects: 'نمایش کارت‌های پروژه',
+                        contact: 'اطلاعات تماس',
+                        'theme': 'تغییر تم (dracula/solarized/nord/paper)',
+                        matrix: 'ایستر اگ — باران ماتریکس',
+                        clear: 'پاک کردن صفحه ترمینال',
+                        history: 'نمایش تاریخچه دستورات',
+                        whoami: 'نمایش کاربر فعلی',
+                        date: 'نمایش تاریخ و زمان',
+                       echo: 'بازگرداندن متن',
+                       ls: 'نمایش چند فایل',
+                        sudo: 'شانس خود را امتحان کنید...',
+                        neofetch: 'نمایش اطلاعات سیستم',
+                        quote: 'نمایش یک نقل قول تصادفی برنامه‌نویسی',
+                        cls: 'پاک کردن صفحه (معادل clear)',
+                        exit: 'نمایش پیام خروج',
+                        banner: 'چاپ مجدد لوگوی ASCII',
+                        social: 'نمایش لینک‌های اجتماعی'
+                   },
+                    aboutTitle: 'پروفایل — امیررضا احمدی‌نژاد',
+                    aboutRows: {
+                        'نام': 'امیررضا احمدی‌نژاد (مهندس جان)',
+                       'نقش': 'معمار سیستم‌های هوش مصنوعی عامل‌محور',
+                        'موقعیت': 'ایران، خراسان رضوی، مشهد',
+                       'تمرکز': 'هوش مصنوعی عامل‌محور · سیستم‌های چندعاملی · اتوماسیون',
+                        'بنیان‌گذار': 'آژانس دیجیتال مارکتینگ',
+                        'مدیر محصول': 'مدیر محصول و تفکر سیستمی'
+                    },
+                    skillsTitle: 'مهارت‌ها:',
+                   skills: [
+                        { label: 'هوش مصنوعی عامل‌محور', pct: 92, category: 'AI و سیستم‌ها' },
+                        { label: 'سیستم‌های چندعاملی', pct: 88, category: 'AI و سیستم‌ها' },
+                        { label: 'ارکستراسیون گردش‌کار', pct: 85, category: 'AI و سیستم‌ها' },
+                        { label: 'اتوماسیون AI', pct: 90, category: 'AI و سیستم‌ها' },
+                        { label: 'استراتژی محصول', pct: 82, category: 'استراتژی و مارکتینگ' },
+                        { label: 'مهندسی پرامپت', pct: 94, category: 'AI و سیستم‌ها' },
+                        { label: 'پایتون', pct: 87, category: 'توسعه' },
+                        { label: 'یکپارچه‌سازی API', pct: 86, category: 'توسعه' },
+                        { label: 'n8n', pct: 83, category: 'توسعه' },
+                        { label: 'دیجیتال مارکتینگ', pct: 79, category: 'استراتژی و مارکتینگ' },
+                        { label: 'SEO', pct: 81, category: 'استراتژی و مارکتینگ' },
+                        { label: 'برندسازی', pct: 78, category: 'استراتژی و مارکتینگ' },
+                        { label: 'معماری کسب‌وکار', pct: 80, category: 'استراتژی و مارکتینگ' }
+                   ],
+                    projectsTitle: 'پروژه‌ها:',
+                   projects: [
+                        { title: 'Tidewater', desc: 'پلتفرم ارکستراسیون گردش‌کار AI برای اتوماسیون سازمانی.', url: 'https://github.com/amirreza4710', status: 'Active',
+                           tags: ['هوش عامل‌محور', 'n8n', 'Python'] },
+                        { title: 'Lantern', desc: 'سیستم اتوماسیون محتوای چندعاملی برای دیجیتال مارکتینگ.', url: 'https://github.com/amirreza4710', status: 'MVP',
+                           tags: ['چندعاملی', 'اتوماسیون AI'] },
+                        { title: 'Fieldnotes', desc: 'داشبورد تحلیل SEO با ردیابی بلادرنگ و بینش.', url: '', status: 'Active',
+                           tags: ['SEO', 'یکپارچه‌سازی API'] },
+                        { title: 'Glasshouse', desc: 'چارچوب استراتژی برند برای وضوح product-market fit.', url: '', status: 'Archived',
+                           tags: ['برندسازی', 'استراتژی محصول'] }
+                   ],
+                    contactTitle: 'اطلاعات تماس:',
+                    contactRows: {
+                        'تلفن': '+98 915 707 7994',
+                        'ایمیل': 'amirrezaahmadynezhad@gmail.com',
+                        'تلگرام': 'https://t.me/amirreza4710',
+                        'گیت‌هاب': 'https://github.com/amirreza4710',
+                        'PGP': 'اثر انگشت: 4A7B 9C2E 1D8F 3B6A 5E90 C4D7 8F2B 1A3C'
+                    },
+                    themeUsage: 'استفاده: theme <name> — موجود: dracula, solarized, nord, paper',
+                    themeSwitched: 'تم تغییر کرد به',
+                    themeInvalid: 'تم یافت نشد. امتحان کنید: dracula, solarized, nord, paper',
+                    matrixJoke: 'بیدار شو، نئو... ماتریکس تو را دارد. (شوخی کردم — فقط CSS است)',
+                    sudoJoke: 'تلاش خوبی بود، اما شما در فایل sudoers نیستید. این حادثه گزارش خواهد شد.',
+                    historyEmpty: 'هنوز تاریخچه‌ای وجود ندارد.',
+                    historyTitle: 'تاریخچه دستورات:',
+                    tapToType: 'برای تایپ ضربه بزنید',
+                    clearDone: '',
+                    unknownCmd: 'دستور یافت نشد',
+                    noSuchFile: 'ls: دسترسی وجود ندارد',
+                    matrixStop: '[برای خروج از ماتریکس هر کلیدی را فشار دهید یا ضربه بزنید]',
+                    focusHint: 'یک دستور تایپ کنید...',
+                    lsFiles: [
+                        'portfolio.js', 'skills.json', 'projects.md', 'contact.txt',
+                        'vibe-coder.yaml', '.env', 'README.md', 'src/'
+                    ],
+                   datePrefix: 'تاریخ فعلی:',
+                   echoResult: '',
+                   dirLabel: '~',
+                    socialTitle: 'لینک‌های اجتماعی:',
+                    exitMsg: 'خدانگهدار! نشست پایان یافت. برای اتصال مجدد صفحه را تازه کنید.',
+                    bannerTitle: 'ترمینال Vibe Coder',
+                    copyToast: 'کپی شد! ✓',
+                    neofetchOS: 'VibeOS 24.04 LTS',
+                    neofetchHost: 'Vibe Coder Terminal',
+                    neofetchKernel: 'JavaScript ES2024',
+                    neofetchUptime: 'از سال ۲۰۱۹',
+                    neofetchShell: 'zsh 5.9',
+                    neofetchDE: 'مرورگر',
+                    neofetchTerminal: 'portfolio.html',
+                    neofetchCPU: 'مغز انسان @ 1.0',
+                    neofetchMemory: '8192 MB / ∞ MB',
+                    quotes: [
+                        '«هر احمقی می‌تواند کدی بنویسد که کامپیوتر بفهمد. برنامه‌نویسان خوب کدی می‌نویسند که انسان‌ها بفهمند.» — مارتین فاولر',
+                        '«اول مسئله را حل کن. بعد کد را بنویس.» — جان جانسون',
+                        '«بهترین راه پیش‌بینی آینده، اختراع آن است.» — آلن کی',
+                        '«سادگی روح کارایی است.» — آستین فریمن',
+                        '«حرف ارزان است. کد را نشان بده.» — لینوس توروالدز',
+                    ],
+               }
+           };
+
+           const t = () => T[lang];
+
+            function toJalali(date) {
+                const gy = date.getFullYear(), gm = date.getMonth() + 1, gd = date.getDate();
+                const gdm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+                const gy2 = (gm > 2) ? (gy + 1) : gy;
+                let days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + gdm[gm - 1];
+                let jy = -1595 + (33 * Math.floor(days / 12053));
+                days %= 12053;
+                jy += 4 * Math.floor(days / 1461);
+                days %= 1461;
+                if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+                let jm, jd;
+                if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + (days % 31); }
+                else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + ((days - 186) % 30); }
+                const mn = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+                return jd + ' ' + mn[jm - 1] + ' ' + jy;
+            }
+
+            function getTimeStr() {
+                const now = new Date();
+                return now.toLocaleTimeString(lang === 'fa' ? 'fa-IR' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+
+           function getPromptHTML() {
+               const dirLabel = t().dirLabel || '~';
+                const user = lang === 'fa' ? 'امیررضا' : 'amirreza';
+                const host = lang === 'fa' ? 'وایب‌کدر' : 'vibe-coder';
+                return '<span class="prompt-user">' + user + '</span>' +
+                   '<span class="prompt-at">@</span>' +
+                    '<span class="prompt-dir">' + host + '</span>' +
+                   '<span class="prompt-dir"> ' + dirLabel + ' </span>' +
+                   '<span class="prompt-sym">❯</span>';
+           }
+
+           function updatePrompt() {
+               promptText.innerHTML = getPromptHTML();
+               const dirLabel = t().dirLabel || '~';
+                const host = lang === 'fa' ? 'وایب‌کدر' : 'vibe-coder';
+                promptText.querySelector('.prompt-dir').textContent = host + ' ' + dirLabel + ' ';
+               input.placeholder = t().focusHint;
+               tapPill.textContent = t().tapToType;
+           }
+
+            function setLanguage(newLang) {
+                if (newLang === lang) return;
+                lang = newLang;
+                document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+                document.documentElement.lang = lang;
+                langEn.classList.toggle('active', lang === 'en');
+                langFa.classList.toggle('active', lang === 'fa');
+                updatePrompt();
+                if (booted) {
+                    refreshLastOutput();
+                }
+                updateDockTooltips();
+            }
+
+            function updateDockTooltips() {
+                const map = {
+                    projects: lang === 'en' ? 'Projects' : 'پروژه‌ها',
+                    skills: lang === 'en' ? 'Skills' : 'مهارت‌ها',
+                    contact: lang === 'en' ? 'Contact' : 'تماس',
+                    themes: lang === 'en' ? 'Themes' : 'تم‌ها',
+                    about: lang === 'en' ? 'About' : 'درباره',
+                };
+                $$('.dock-icon').forEach(btn => {
+                    const cmd = btn.getAttribute('data-command');
+                    const tooltip = btn.querySelector('.dock-tooltip');
+                    if (tooltip && map[cmd]) tooltip.textContent = map[cmd];
+                });
+            }
+
+            function scrollToBottom() {
+                output.scrollTop = output.scrollHeight;
+            }
+
+            function addLine(text, className = '') {
+                const div = document.createElement('div');
+                div.className = 'output-line ' + className;
+                if (lang === 'fa') {
+                    div.style.direction = 'rtl';
+                    div.style.textAlign = 'right';
+                }
+                div.textContent = text;
+                output.appendChild(div);
+                scrollToBottom();
+                return div;
+            }
+
+            function addHTML(html, className = '') {
+                const div = document.createElement('div');
+                div.className = 'output-line ' + className;
+                if (lang === 'fa') {
+                    div.style.direction = 'rtl';
+                    div.style.textAlign = 'right';
+                }
+                div.innerHTML = html;
+                output.appendChild(div);
+                scrollToBottom();
+                return div;
+            }
+
+            function addCommandLine(cmdText) {
+                const div = document.createElement('div');
+                div.className = 'cmd-history-line';
+                div.style.direction = 'ltr';
+                div.style.textAlign = 'left';
+                const promptSpan = document.createElement('span');
+                promptSpan.className = 'prompt-part';
+                promptSpan.innerHTML = getPromptHTML();
+                promptSpan.style.marginRight = '6px';
+                const cmdSpan = document.createElement('span');
+                cmdSpan.className = 'prompt-part';
+                cmdSpan.style.color = 'var(--fg)';
+                cmdSpan.textContent = cmdText;
+                div.appendChild(promptSpan);
+                div.appendChild(cmdSpan);
+                output.appendChild(div);
+                scrollToBottom();
+                return div;
+            }
+
+           function getASCIILogo() {
+                if (lang === 'fa') {
+                    return [
+                        ' ██╗   ██╗ █████╗ ██╗██████╗     ██╗  ██╗██████╗ ███████╗██████╗ ',
+                        ' ██║   ██║██╔══██╗██║██╔══██╗    ██║ ██╔╝██╔══██╗██╔════╝██╔══██╗',
+                        ' ██║   ██║███████║██║██████╔╝    █████╔╝ ██║  ██║█████╗  ██████╔╝',
+                        ' ╚██╗ ██╔╝██╔══██║██║██╔══██╗    ██╔═██╗ ██║  ██║██╔══╝  ██╔══██╗',
+                        '  ╚████╔╝ ██║  ██║██║██████╔╝    ██║  ██╗██████╔╝███████╗██║  ██║',
+                        '   ╚═══╝  ╚═╝  ╚═╝╚═╝╚═════╝     ╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝',
+                    ];
+                }
+               return [
+                   '██╗   ██╗██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗██████╗ ',
+                   '██║   ██║██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔══██╗',
+                   '██║   ██║██║██████╔╝█████╗      ██║     ██║   ██║██║  ██║█████╗  ██████╔╝',
+                   '╚██╗ ██╔╝██║██╔══██╗██╔══╝      ██║     ██║   ██║██║  ██║██╔══╝  ██╔══██╗',
+                   ' ╚████╔╝ ██║██████╔╝███████╗    ╚██████╗╚██████╔╝██████╔╝███████╗██║  ██║',
+                   '  ╚═══╝  ╚═╝╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝',
+               ];
+           }
+
+            function typeASCII() {
+                const lines = getASCIILogo();
+                const container = document.createElement('div');
+                container.className = 'ascii-logo';
+                container.style.direction = 'ltr';
+                container.style.textAlign = 'left';
+                output.appendChild(container);
+
+                if (prefersReducedMotion) {
+                    container.textContent = lines.join('\n');
+                    scrollToBottom();
+                    afterBoot();
+                    return;
+                }
+
+                let lineIdx = 0;
+                let charIdx = 0;
+                const charPerTick = 4;
+                const tickMs = 12;
+
+                function typeNext() {
+                    if (lineIdx >= lines.length) {
+                        afterBoot();
+                        return;
+                    }
+                    const currentLine = lines[lineIdx];
+                    const partial = currentLine.substring(0, charIdx);
+                    const remaining = lines.slice(0, lineIdx).join('\n');
+                    container.textContent = remaining + (remaining ? '\n' : '') + partial;
+                    scrollToBottom();
+                    charIdx += charPerTick;
+                    if (charIdx > currentLine.length) {
+                        charIdx = 0;
+                        lineIdx++;
+                        if (lineIdx < lines.length) {
+                            container.textContent = lines.slice(0, lineIdx).join('\n');
+                            scrollToBottom();
+                        }
+                    }
+                    typingTimers.push(setTimeout(typeNext, tickMs));
+                }
+                typeNext();
+            }
+
+           function afterBoot() {
+               if (booted) return;
+               booted = true;
+                const loginDate = lang === 'fa' ? toJalali(new Date()) + ' — ' + getTimeStr() : new Date().toDateString();
+                const loginPrefix = lang === 'fa' ? 'آخرین ورود: ' : 'Last login: ';
+                addLine(loginPrefix + loginDate + ' from 127.0.0.1', 'dim');
+               addLine(t().welcome, 'success');
+               addLine(t().hint, 'dim');
+               addLine('', '');
+               scrollToBottom();
+               input.focus();
+           }
+
+            function clearOutput() {
+                output.innerHTML = '';
+                if (booted) {
+                    afterBoot();
+                }
+            }
+
+            function runCommand(cmdText) {
+                const trimmed = cmdText.trim();
+                if (!trimmed) return;
+                addCommandLine(trimmed);
+                history.push(trimmed);
+                historyIndex = history.length;
+                const parts = trimmed.split(/\s+/);
+                const cmd = parts[0].toLowerCase();
+                const args = parts.slice(1);
+
+                switch (cmd) {
+                    case 'help':
+                        cmdHelp();
+                        break;
+                    case 'about':
+                        cmdAbout();
+                        break;
+                    case 'skills':
+                        cmdSkills();
+                        break;
+                    case 'projects':
+                        cmdProjects();
+                        break;
+                    case 'contact':
+                        cmdContact();
+                        break;
+                    case 'theme':
+                        cmdTheme(args);
+                        break;
+                    case 'matrix':
+                        cmdMatrix();
+                        break;
+                    case 'clear':
+                        clearOutput();
+                        break;
+                    case 'history':
+                        cmdHistory();
+                        break;
+                    case 'whoami':
+                        cmdWhoami();
+                        break;
+                    case 'date':
+                        cmdDate();
+                        break;
+                    case 'echo':
+                        cmdEcho(parts.slice(1).join(' '));
+                        break;
+                    case 'ls':
+                        cmdLs();
+                        break;
+                   case 'sudo':
+                       cmdSudo();
+                       break;
+                    case 'neofetch':
+                        cmdNeofetch();
+                        break;
+                    case 'quote':
+                        cmdQuote();
+                        break;
+                    case 'cls':
+                        clearOutput();
+                        break;
+                    case 'exit':
+                        cmdExit();
+                        break;
+                    case 'banner':
+                        cmdBanner();
+                        break;
+                    case 'social':
+                        cmdSocial();
+                        break;
+                   default:
+                       cmdUnknown(trimmed);
+                       break;
+                }
+                scrollToBottom();
+            }
+
+            function cmdHelp() {
+                const items = t().helpItems;
+                const grid = document.createElement('div');
+                grid.className = 'help-grid';
+                grid.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+                for (const [cmdName, desc] of Object.entries(items)) {
+                    const item = document.createElement('div');
+                    item.className = 'help-item';
+                    item.innerHTML = '<span class="help-cmd">' + cmdName + '</span><span class="help-desc">' + desc +
+                        '</span>';
+                    grid.appendChild(item);
+                }
+                addLine(t().helpTitle, 'accent');
+                output.appendChild(grid);
+                scrollToBottom();
+            }
+
+           function cmdAbout() {
+               const rows = t().aboutRows;
+               const table = document.createElement('div');
+               table.className = 'about-table';
+               table.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+               for (const [k, v] of Object.entries(rows)) {
+                   const row = document.createElement('div');
+                   row.className = 'about-row';
+                    let badgeHTML = '';
+                    const badgeKeywords = ['Architect', 'Product', 'AI', 'Agentic', 'معمار', 'محصول', 'مدیر'];
+                    if (badgeKeywords.some(kw => v.includes(kw) || k.includes(kw))) {
+                        badgeHTML = ' <span class="status-badge active" style="font-size:8px;padding:1px 5px;">★</span>';
+                    }
+                    row.innerHTML = '<span class="about-key">' + badgeHTML + k + '</span><span class="about-val">' + v + '</span>';
+                   table.appendChild(row);
+               }
+               addLine(t().aboutTitle, 'accent');
+               output.appendChild(table);
+               scrollToBottom();
+           }
+
+           function cmdSkills() {
+               const skillsData = t().skills;
+               addLine(t().skillsTitle, 'accent');
+               const container = document.createElement('div');
+               container.className = 'skills-grid';
+               container.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+               const grouped = {};
+               skillsData.forEach(s => {
+                   const cat = s.category || 'Other';
+                   if (!grouped[cat]) grouped[cat] = [];
+                   grouped[cat].push(s);
+               });
+               Object.keys(grouped).forEach(cat => {
+                   const catHeader = document.createElement('div');
+                   catHeader.className = 'skill-category';
+                   catHeader.textContent = cat;
+                   container.appendChild(catHeader);
+                   grouped[cat].forEach((skill, i) => {
+                       const row = document.createElement('div');
+                       row.className = 'skill-bar-row';
+                       let tierClass = '';
+                       if (skill.pct >= 90) tierClass = 'tier-expert';
+                       else if (skill.pct >= 80) tierClass = 'tier-advanced';
+                       else tierClass = 'tier-proficient';
+                       const tierLabel = skill.pct >= 90 ? 'Expert' : skill.pct >= 80 ? 'Advanced' : 'Proficient';
+                      row.innerHTML = '<span class="skill-label">' + skill.label + '</span>' +
+                          '<span class="skill-bar-track" data-tooltip="' + skill.label + ' — ' + skill.pct + '% ' + tierLabel + '"><span class="skill-bar-fill ' + tierClass + '" style="--target-width:' +
+                           skill.pct + '%;"></span><span class="skill-pct">0%</span></span>';
+                      container.appendChild(row);
+                       const fillEl = row.querySelector('.skill-bar-fill');
+                       const pctEl = row.querySelector('.skill-pct');
+                       const animateCounter = (start, end, el) => {
+                           const duration = 600;
+                           const startTime = performance.now();
+                           const step = (now) => {
+                               const elapsed = now - startTime;
+                               const progress = Math.min(elapsed / duration, 1);
+                               const eased = 1 - Math.pow(1 - progress, 3);
+                               el.textContent = Math.round(start + (end - start) * eased) + '%';
+                               if (progress < 1) requestAnimationFrame(step);
+                           };
+                           requestAnimationFrame(step);
+                       };
+                       if (prefersReducedMotion) {
+                           fillEl.style.width = skill.pct + '%';
+                           pctEl.textContent = skill.pct + '%';
+                       } else {
+                           setTimeout(() => {
+                               fillEl.classList.add('animated');
+                               animateCounter(0, skill.pct, pctEl);
+                           }, 40 + i * 50);
+                       }
+                   });
+               });
+               output.appendChild(container);
+               scrollToBottom();
+           }
+
+           function cmdProjects() {
+               const projects = t().projects;
+               addLine(t().projectsTitle, 'accent');
+               const container = document.createElement('div');
+               container.className = 'projects-container';
+               container.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+               projects.forEach((proj) => {
+                   const card = document.createElement('div');
+                   card.className = 'project-card';
+                   let tagsHTML = '';
+                   proj.tags.forEach(tag => {
+                       tagsHTML += '<span class="tag-pill">' + tag + '</span>';
+                   });
+                    let statusHTML = '';
+                    if (proj.status) {
+                        const statusLower = proj.status.toLowerCase();
+                        statusHTML = ' <span class="status-badge ' + statusLower + '">' + proj.status + '</span>';
+                    }
+                    const titleHTML = proj.url
+                        ? '<a href="' + proj.url + '" target="_blank" rel="noopener">' + proj.title + '</a>'
+                        : proj.title;
+                    card.innerHTML = '<div class="project-header"><div class="project-title">' + titleHTML + '</div>' + statusHTML + '</div>' +
+                       '<div class="project-desc">' + proj.desc + '</div>' +
+                       '<div class="project-tags">' + tagsHTML + '</div>';
+                   container.appendChild(card);
+               });
+               output.appendChild(container);
+               scrollToBottom();
+           }
+
+           function cmdContact() {
+               const rows = t().contactRows;
+               const table = document.createElement('div');
+               table.className = 'about-table';
+               table.style.direction = lang === 'fa' ? 'rtl' : 'ltr';
+               for (const [k, v] of Object.entries(rows)) {
+                   const row = document.createElement('div');
+                   row.className = 'about-row';
+                    let valHTML;
+                    if (v.startsWith('http')) {
+                        valHTML = '<span class="about-val"><a href="' + v + '" target="_blank" rel="noopener" style="color:var(--dir);">' + v + '</a></span>';
+                    } else if (v.includes('@')) {
+                        valHTML = '<span class="about-val"><a href="mailto:' + v + '" style="color:var(--dir);">' + v + '</a></span>';
+                    } else if (v.includes('+')) {
+                        valHTML = '<span class="about-val"><a href="tel:' + v.replace(/\s/g, '') + '" style="color:var(--dir);">' + v + '</a></span>';
+                    } else {
+                        valHTML = '<span class="about-val">' + v + '</span>';
+                    }
+                   row.innerHTML = '<span class="about-key">' + k + '</span>' + valHTML;
+                    row.style.cursor = 'pointer';
+                    row.title = lang === 'en' ? 'Click to copy' : 'کلیک برای کپی';
+                    row.addEventListener('click', () => {
+                        navigator.clipboard.writeText(v).then(() => {
+                            addLine('✅ ' + t().copyToast + ' ' + k + ': ' + v, 'toast');
+                        }).catch(() => {});
+                    });
+                   table.appendChild(row);
+               }
+               addLine(t().contactTitle, 'accent');
+               output.appendChild(table);
+               scrollToBottom();
+           }
+
+            function cmdTheme(args) {
+                if (!args.length || args[0] === 'list' || args[0] === 'ls') {
+                    addLine(t().themeUsage, 'dim');
+                    addLine('Available: ' + themes.join(', '), 'accent');
+                    return;
+                }
+                const requested = args[0].toLowerCase();
+                if (themes.includes(requested)) {
+                    currentTheme = requested;
+                    document.documentElement.setAttribute('data-theme', requested);
+                    addLine(t().themeSwitched + ' → ' + requested, 'success');
+                } else {
+                    addLine(t().themeInvalid, 'error');
+                }
+            }
+
+            function cmdMatrix() {
+                if (matrixActive) return;
+                matrixActive = true;
+                const canvas = document.createElement('canvas');
+                canvas.className = 'matrix-canvas active';
+                canvas.id = 'matrixCanvas';
+                terminalBody.appendChild(canvas);
+                canvas.width = terminalBody.clientWidth;
+                canvas.height = terminalBody.clientHeight;
+                matrixCanvas = canvas;
+                matrixCtx = canvas.getContext('2d');
+                matrixStartTime = Date.now();
+
+                const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789{}[]<>/\\|=+-*&^%$#@!';
+                const fontSize = 13;
+                const columns = Math.ceil(canvas.width / fontSize);
+                const drops = new Array(columns).fill(0);
+
+                function getMatrixColor() {
+                    const green = getComputedStyle(document.documentElement).getPropertyValue('--matrix-green').trim() ||
+                        '#50fa7b';
+                    return green;
+                }
+
+                function drawMatrix() {
+                    const green = getMatrixColor();
+                    matrixCtx.fillStyle = 'rgba(0,0,0,0.08)';
+                    matrixCtx.fillRect(0, 0, canvas.width, canvas.height);
+                    matrixCtx.font = fontSize + 'px ' + getComputedStyle(document.documentElement).getPropertyValue(
+                        '--font-mono');
+                    for (let i = 0; i < columns; i++) {
+                        const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+                        const x = i * fontSize;
+                        const y = drops[i] * fontSize;
+                        matrixCtx.fillStyle = green;
+                        matrixCtx.fillText(glyph, x, y);
+                        if (y > canvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        drops[i]++;
+                    }
+                    const elapsed = Date.now() - matrixStartTime;
+                    if (elapsed > 7000) {
+                        stopMatrix(true);
+                        return;
+                    }
+                    matrixRAF = requestAnimationFrame(drawMatrix);
+                }
+                drawMatrix();
+            }
+
+            function stopMatrix(showJoke) {
+                if (!matrixActive) return;
+                matrixActive = false;
+                if (matrixRAF) cancelAnimationFrame(matrixRAF);
+                if (matrixCanvas) {
+                    matrixCanvas.classList.remove('active');
+                    setTimeout(() => {
+                        if (matrixCanvas && matrixCanvas.parentNode) {
+                            matrixCanvas.parentNode.removeChild(matrixCanvas);
+                        }
+                    }, 280);
+                    matrixCanvas = null;
+                    matrixCtx = null;
+                }
+                if (showJoke) {
+                    addLine(t().matrixJoke, 'accent');
+                }
+                scrollToBottom();
+                input.focus();
+            }
+
+            function cmdHistory() {
+                if (!history.length) {
+                    addLine(t().historyEmpty, 'dim');
+                    return;
+                }
+                addLine(t().historyTitle, 'accent');
+                const list = document.createElement('div');
+                list.className = 'history-list';
+                list.style.direction = 'ltr';
+                list.style.textAlign = 'left';
+                history.forEach((h, i) => {
+                    const item = document.createElement('div');
+                    item.innerHTML = '<span class="history-num">' + (i + 1) + '.</span> ' + h;
+                    list.appendChild(item);
+                });
+                output.appendChild(list);
+                scrollToBottom();
+            }
+
+           function cmdWhoami() {
+                addLine(lang === 'en' ? 'amirreza' : 'امیررضا (مهندس جان)', 'success');
+           }
+
+           function cmdDate() {
+               const d = new Date();
+               const dateStr = lang === 'en' ? d.toString() : toJalali(d) + ' — ' + getTimeStr();
+               addLine(t().datePrefix + ' ' + dateStr, 'dim');
+           }
+
+            function cmdEcho(text) {
+                addLine(text || '', '');
+            }
+
+            function cmdLs() {
+                const files = t().lsFiles;
+                files.forEach(f => {
+                    addLine(f, f.includes('.') ? '' : 'accent');
+                });
+            }
+
+           function cmdSudo() {
+               addLine(t().sudoJoke, 'error');
+           }
+
+            function cmdNeofetch() {
+               const container = document.createElement('div');
+               container.style.display = 'flex';
+               container.style.gap = '20px';
+               container.style.margin = '8px 0';
+               container.style.flexWrap = 'wrap';
+               container.style.alignItems = 'flex-start';
+               const ascii = document.createElement('pre');
+               ascii.style.color = 'var(--accent)';
+               ascii.style.fontSize = '10px';
+               ascii.style.lineHeight = '1.2';
+               ascii.style.margin = '0';
+               ascii.style.fontFamily = 'var(--font-mono)';
+               ascii.textContent = [
+                   '      ___           ___           ___     ',
+                   '     /\\__\\         /\\  \\         /\\  \\    ',
+                   '    /:/ _/_       |::\\  \\       /::\\  \\   ',
+                   '   /:/ /\\__\\      |:::\\  \\     /:/\\:\\  \\  ',
+                   '  /:/ /:/ _/_   __|::\\:\\  \\   /:/  \\:\\__\\ ',
+                   ' /:/_/:/ /\\__\\ /\\__|\\:\\:\\__\\ /:/__/ \\:|__|',
+                   ' \\:\\/:/ /:/  / \\::::\\ \\:\\/__/ \\:\\  \\ /:/  /',
+                   '  \\::/_/:/  /   ~~~~\\:\\/__/   \\:\\  /:/  / ',
+                   '   \\:\\/:/  /          \\::\\      \\:\\/:/  /  ',
+                   '    \\::/  /            \\__\\      \\::/  /   ',
+                   '     \\/__/                        \\/__/    ',
+               ].join('\n');
+               container.appendChild(ascii);
+               const info = document.createElement('div');
+               info.style.minWidth = '180px';
+               info.style.fontSize = '12px';
+               info.style.lineHeight = '1.8';
+               const infoRows = [
+                   ['OS', t().neofetchOS],
+                   ['Host', t().neofetchHost],
+                   ['Kernel', t().neofetchKernel],
+                   ['Uptime', t().neofetchUptime],
+                   ['Shell', t().neofetchShell],
+                   ['DE', t().neofetchDE],
+                   ['Terminal', t().neofetchTerminal],
+                   ['CPU', t().neofetchCPU],
+                   ['Memory', t().neofetchMemory],
+               ];
+               infoRows.forEach(([label, val]) => {
+                   const line = document.createElement('div');
+                   line.innerHTML = '<span style="color:var(--accent);font-weight:600;">' + label + '</span>: <span style="color:var(--fg-dim);">' + val + '</span>';
+                   info.appendChild(line);
+               });
+               const colors = ['var(--user)', 'var(--dir)', 'var(--prompt-sym)', 'var(--accent)', 'var(--matrix-green)', 'var(--error)', 'var(--success)', 'var(--accent)'];
+               const colorBar = document.createElement('div');
+               colorBar.style.display = 'flex';
+               colorBar.style.gap = '2px';
+               colorBar.style.marginTop = '6px';
+               colors.forEach(c => {
+                   const swatch = document.createElement('span');
+                   swatch.style.display = 'inline-block';
+                   swatch.style.width = '14px';
+                   swatch.style.height = '14px';
+                   swatch.style.borderRadius = '3px';
+                   swatch.style.background = c;
+                   colorBar.appendChild(swatch);
+               });
+               info.appendChild(colorBar);
+               container.appendChild(info);
+               output.appendChild(container);
+               scrollToBottom();
+            }
+
+            function cmdQuote() {
+               const quotes = t().quotes;
+               const random = quotes[Math.floor(Math.random() * quotes.length)];
+               addLine(random, 'accent');
+            }
+
+            function cmdExit() {
+               addLine('👋 ' + t().exitMsg, 'dim');
+            }
+
+            function cmdBanner() {
+               const lines = getASCIILogo();
+               const container = document.createElement('div');
+               container.className = 'ascii-logo';
+               container.style.direction = 'ltr';
+               container.style.textAlign = 'left';
+               container.textContent = lines.join('\n');
+               output.appendChild(container);
+               addLine(t().bannerTitle, 'success');
+               scrollToBottom();
+            }
+
+            function cmdSocial() {
+               const rows = t().contactRows;
+               const socialKeys = ['Telegram', 'GitHub', 'Email'];
+               addLine(t().socialTitle, 'accent');
+               const grid = document.createElement('div');
+               grid.className = 'help-grid';
+               grid.style.direction = 'ltr';
+               grid.style.textAlign = 'left';
+               for (const [k, v] of Object.entries(rows)) {
+                   if (socialKeys.includes(k) || k.startsWith('http')) {
+                       const item = document.createElement('div');
+                       item.className = 'help-item';
+                       let href = v;
+                       if (v.includes('@')) href = 'mailto:' + v;
+                       item.innerHTML = '<span class="help-cmd">' + k + '</span><span class="help-desc"><a href="' + href + '" target="_blank" rel="noopener" style="color:var(--dir);">' + v + '</a></span>';
+                       grid.appendChild(item);
+                   }
+               }
+               output.appendChild(grid);
+               scrollToBottom();
+            }
+
+            function cmdUnknown(cmd) {
+               addLine('zsh: ' + t().unknownCmd + ': ' + cmd, 'error');
+           }
+
+            function refreshLastOutput() {
+                if (output.children.length > 0) {
+                    const lastChild = output.lastElementChild;
+                    if (lastChild && lastChild.classList.contains('output-line')) {
+                        // Just re-render relevant text direction
+                        if (lang === 'fa') {
+                            lastChild.style.direction = 'rtl';
+                            lastChild.style.textAlign = 'right';
+                        } else {
+                            lastChild.style.direction = 'ltr';
+                            lastChild.style.textAlign = 'left';
+                        }
+                    }
+                }
+                updateDockTooltips();
+            }
+
+           function handleTabCompletion() {
+               const val = input.value;
+               const parts = val.split(/\s+/);
+               const first = parts[0].toLowerCase();
+               if (!val.includes(' ')) {
+                   const matches = commands.filter(c => c.startsWith(first));
+                   if (matches.length === 1) {
+                       input.value = matches[0] + ' ';
+                   } else if (matches.length > 1) {
+                        const dropdown = document.createElement('div');
+                        dropdown.className = 'completion-dropdown';
+                        matches.forEach(m => {
+                            const chip = document.createElement('span');
+                            chip.className = 'completion-item';
+                            chip.textContent = m;
+                            dropdown.appendChild(chip);
+                        });
+                        output.appendChild(dropdown);
+                        scrollToBottom();
+                   }
+                   return;
+               }
+               if (first === 'theme' && parts.length === 2) {
+                   const partial = parts[1].toLowerCase();
+                   const matches = themes.filter(th => th.startsWith(partial));
+                   if (matches.length === 1) {
+                       input.value = 'theme ' + matches[0] + ' ';
+                   } else if (matches.length > 1) {
+                        const dropdown = document.createElement('div');
+                        dropdown.className = 'completion-dropdown';
+                        matches.forEach(m => {
+                            const chip = document.createElement('span');
+                            chip.className = 'completion-item';
+                            chip.textContent = m;
+                            dropdown.appendChild(chip);
+                        });
+                        output.appendChild(dropdown);
+                        scrollToBottom();
+                   }
+               }
+           }
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = input.value;
+                    if (matrixActive) {
+                        stopMatrix(true);
+                        input.value = '';
+                        return;
+                    }
+                    if (val.trim()) {
+                        runCommand(val);
+                    }
+                    input.value = '';
+                    historyIndex = history.length;
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (history.length === 0) return;
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        input.value = history[historyIndex];
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex < history.length) {
+                        historyIndex++;
+                        input.value = historyIndex < history.length ? history[historyIndex] : '';
+                    }
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    if (matrixActive) {
+                        stopMatrix(true);
+                        return;
+                    }
+                    handleTabCompletion();
+               } else if (e.key === 'l' && e.ctrlKey) {
+                   e.preventDefault();
+                   clearOutput();
+                   input.value = '';
+                } else if (e.key === 'u' && e.ctrlKey) {
+                    e.preventDefault();
+                    input.value = '';
+                } else if (e.key === 'w' && e.ctrlKey) {
+                    e.preventDefault();
+                    const val = input.value;
+                    const cursorPos = input.selectionStart;
+                    const before = val.substring(0, cursorPos);
+                    const after = val.substring(cursorPos);
+                    const lastWord = before.replace(/\S+\s*$/, '');
+                    input.value = lastWord + after;
+                    const newPos = lastWord.length;
+                    input.setSelectionRange(newPos, newPos);
+               } else if (e.key === 'c' && e.ctrlKey) {
+                   e.preventDefault();
+                   addCommandLine('^C');
+                    input.value = '';
+                    if (matrixActive) stopMatrix(true);
+                } else if (matrixActive) {
+                    stopMatrix(true);
+                }
+            });
+
+            input.addEventListener('focus', () => {
+                terminalWindow.classList.remove('input-unfocused');
+                tapPill.classList.remove('visible');
+            });
+
+            input.addEventListener('blur', () => {
+                terminalWindow.classList.add('input-unfocused');
+                if (isMobile && !input.value) {
+                    setTimeout(() => {
+                        if (document.activeElement !== input) {
+                            tapPill.classList.add('visible');
+                        }
+                    }, 400);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (matrixActive) {
+                    const canvas = $('#matrixCanvas');
+                    if (canvas && canvas.contains(e.target)) {
+                        stopMatrix(true);
+                    }
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (matrixActive && e.key && e.key !== 'Enter' && e.key !== 'Tab') {
+                    stopMatrix(true);
+                }
+            });
+
+            langEn.addEventListener('click', () => setLanguage('en'));
+           langFa.addEventListener('click', () => setLanguage('fa'));
+
+            $('#tlRed').addEventListener('click', () => {
+                terminalWindow.classList.add('closed');
+                $('#reopenBtn').classList.add('visible');
+            });
+            $('#tlYellow').addEventListener('click', () => {
+                terminalWindow.classList.toggle('minimized');
+                if (terminalWindow.classList.contains('minimized')) {
+                    $('#tlYellow').title = 'Restore';
+                } else {
+                    $('#tlYellow').title = 'Minimize';
+                }
+            });
+            $('#tlGreen').addEventListener('click', () => {
+                terminalWindow.classList.toggle('maximized');
+            });
+            $('#reopenBtn').addEventListener('click', () => {
+                terminalWindow.classList.remove('closed', 'minimized');
+                $('#reopenBtn').classList.remove('visible');
+                input.focus();
+            });
+
+           $$('.dock-icon').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cmd = btn.getAttribute('data-command');
+                    if (matrixActive) {
+                        stopMatrix(false);
+                    }
+                   if (cmd === 'themes') {
+                        const currentIdx = themes.indexOf(currentTheme);
+                        const nextIdx = (currentIdx + 1) % themes.length;
+                        const nextTheme = themes[nextIdx];
+                        currentTheme = nextTheme;
+                        document.documentElement.setAttribute('data-theme', nextTheme);
+                        addLine(t().themeSwitched + ' → ' + nextTheme, 'success');
+                   } else {
+                       runCommand(cmd);
+                   }
+                    input.focus();
+                });
+            });
+
+            $$('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    $$('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    if (tabId === 'notes') {
+                        addLine('--- notes.md ---', 'accent');
+                        addLine(lang === 'en' ? '# Notes: Focus on shipping MVP first.' :
+                            '# یادداشت‌ها: اول روی MVP تمرکز کنید.', 'dim');
+                    } else if (tabId === 'log') {
+                        addLine('--- server.log ---', 'accent');
+                        addLine(lang === 'en' ? '[INFO] Server running on port 3000' :
+                            '[INFO] سرور روی پورت 3000 اجرا شد', 'dim');
+                    }
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                if (matrixCanvas) {
+                    matrixCanvas.width = terminalBody.clientWidth;
+                    matrixCanvas.height = terminalBody.clientHeight;
+                }
+            });
+
+            function init() {
+                updatePrompt();
+                updateDockTooltips();
+                terminalWindow.classList.add('input-unfocused');
+                if (isMobile && !input.value) {
+                    setTimeout(() => tapPill.classList.add('visible'), 1500);
+                }
+                typeASCII();
+                if (!prefersReducedMotion) {
+                    // Ensure blob animation runs
+                }
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
